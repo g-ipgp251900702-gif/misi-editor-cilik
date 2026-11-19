@@ -857,4 +857,1271 @@
           osc.type = type;
           osc.frequency.setValueAtTime(freq, now);
           gain.gain.setValueAtTime(vol, now);
-          gain.gain.exponentialRampToValueAt
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        } catch (e) {}
+      },
+      coin() { this.playTone(987.77, 'sine', 0.09, 0.11, 0); this.playTone(1318.51, 'sine', 0.22, 0.11, 0.07); },
+      laneSwitch() { this.playTone(320, 'triangle', 0.08, 0.08, 0); this.playTone(480, 'triangle', 0.08, 0.06, 0.04); },
+      correct() { this.playTone(523.25, 'triangle', 0.12, 0.11, 0); this.playTone(659.25, 'triangle', 0.12, 0.11, 0.09); this.playTone(783.99, 'triangle', 0.24, 0.12, 0.18); },
+      wrong() { this.playTone(220, 'sawtooth', 0.18, 0.09, 0); this.playTone(175, 'sawtooth', 0.25, 0.09, 0.14); },
+      unlock() { [523.25, 659.25, 783.99, 1046.5].forEach((n, i) => this.playTone(n, 'square', 0.16, 0.07, i * 0.09)); },
+      startBGM() {
+        if (this.bgmInterval || this.isMuted) return;
+        const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 293.66, 392.00, 349.23, 440.00, 523.25, 440.00, 392.00, 329.63, 293.66, 246.94];
+        this.bgmInterval = setInterval(() => {
+          if (this.isMuted) return;
+          this.playTone(melody[this.step % melody.length], 'triangle', 0.18, 0.025, 0);
+          if (this.step % 4 === 0) this.playTone(130.81, 'sine', 0.22, 0.035, 0);
+          this.step++;
+        }, 260);
+      },
+      stopBGM() {
+        if (this.bgmInterval) { clearInterval(this.bgmInterval); this.bgmInterval = null; }
+      }
+    };
+
+    function toggleAudio() {
+      SoundEngine.isMuted = !SoundEngine.isMuted;
+      if (SoundEngine.isMuted) { SoundEngine.stopBGM(); }
+      else { SoundEngine.init(); SoundEngine.startBGM(); SoundEngine.coin(); }
+      const hudBtn = document.getElementById('btn-audio-toggle');
+      if (hudBtn) hudBtn.textContent = SoundEngine.isMuted ? '🔇' : '🔊';
+    }
+
+    function getAvatarSVG(type = 'zafri') {
+      if (type === 'maya') {
+        return `<svg viewBox="0 0 100 100" class="w-full h-full rounded-2xl"><rect width="100" height="100" rx="20" fill="#6C2BD9"/><circle cx="24" cy="42" r="11" fill="#1E1B4B"/><circle cx="76" cy="42" r="11" fill="#1E1B4B"/><circle cx="50" cy="52" r="24" fill="#FDBA74"/><path d="M26 44 Q50 22 74 44 Z" fill="#00E5FF"/><rect x="46" y="37" width="34" height="7" rx="3.5" fill="#FFD600"/><circle cx="42" cy="53" r="3.5" fill="#0F172A"/><circle cx="58" cy="53" r="3.5" fill="#0F172A"/><path d="M43 62 Q50 69 57 62" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M26 95 Q50 74 74 95 Z" fill="#FFD600"/></svg>`;
+      }
+      return `<svg viewBox="0 0 100 100" class="w-full h-full rounded-2xl"><rect width="100" height="100" rx="20" fill="#0284C7"/><path d="M26 44 L32 24 L44 33 L52 20 L61 32 L72 25 L74 45 Z" fill="#0F172A"/><circle cx="50" cy="53" r="23" fill="#FDBA74"/><rect x="20" y="42" width="8" height="20" rx="4" fill="#FFD600"/><rect x="72" y="42" width="8" height="20" rx="4" fill="#FFD600"/><path d="M24 44 Q50 18 76 44" stroke="#FF6D00" stroke-width="5" fill="none"/><circle cx="42" cy="53" r="3.5" fill="#0F172A"/><circle cx="58" cy="53" r="3.5" fill="#0F172A"/><path d="M42 62 Q50 70 58 62" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M24 95 Q50 73 76 95 Z" fill="#FF6D00"/></svg>`;
+    }
+
+    function switchPlayerAvatar(avatarType) {
+      gameState.avatar = avatarType;
+      saveGameState();
+      SoundEngine.laneSwitch();
+      showToast('Watak ditukar kepada ' + (avatarType === 'maya' ? 'Maya' : 'Zafri') + '!', '✨');
+    }
+
+    const STORAGE_KEY = 'misi_editor_cilik_v3';
+    const DEFAULT_STATE = {
+      name: '',
+      studentClass: '',
+      avatar: 'zafri',
+      coins: 0,
+      xp: 0,
+      unlockedMissions: [1],
+      completedMissions: [],
+      unlockAllOverride: false,
+      mod2Drafts: {},
+      mod5Essay: '',
+      mod5Topic: 'Sambutan Hari Kebangsaan di Sekolah Saya',
+      badges: []
+    };
+
+    let gameState = loadGameState();
+
+    function loadGameState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+      } catch (e) {}
+      return { ...DEFAULT_STATE };
+    }
+
+    function saveGameState() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState)); } catch (e) {}
+      updateHUD();
+    }
+
+    function addRewards(coinsEarned, xpEarned, reason = '') {
+      gameState.coins += coinsEarned;
+      gameState.xp += xpEarned;
+      checkAutomaticBadges();
+      saveGameState();
+      if (coinsEarned > 0) SoundEngine.coin();
+      if (reason) showToast('+' + coinsEarned + ' Syiling & +' + xpEarned + ' XP (' + reason + ')', '🪙');
+    }
+
+    function completeMission(missionId) {
+      if (!gameState.completedMissions.includes(missionId)) gameState.completedMissions.push(missionId);
+      const nextId = missionId + 1;
+      if (nextId <= 5 && !gameState.unlockedMissions.includes(nextId)) {
+        gameState.unlockedMissions.push(nextId);
+        SoundEngine.unlock();
+      }
+      checkAutomaticBadges();
+      saveGameState();
+    }
+
+    function getPlayerRank(xp) {
+      if (xp >= 600) return 'Tahap 5: Legenda Editor Cilik';
+      if (xp >= 400) return 'Tahap 4: Pakar Penyunting Kota';
+      if (xp >= 250) return 'Tahap 3: Detektif Bahasa Handal';
+      if (xp >= 100) return 'Tahap 2: Penulis Muda Subway';
+      return 'Tahap 1: Perantis Editor';
+    }
+
+    function showToast(msg, icon = '✨') {
+      const box = document.getElementById('toast-box');
+      document.getElementById('toast-icon').textContent = icon;
+      document.getElementById('toast-msg').textContent = msg;
+      box.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => box.classList.add('hidden'), 3200);
+    }
+
+    const VIEWS = ['landing', 'login', 'dashboard', 'mod1', 'mod2', 'mod3', 'mod4', 'mod5'];
+    let runnerState = { active: false, qIndex: 0, lane: 1, gateY: 0, score: 0, lives: 3, paused: false, animId: null };
+
+    function goToLoginScreen() {
+      SoundEngine.init();
+      SoundEngine.startBGM();
+      SoundEngine.unlock();
+      navigateTo('login');
+    }
+
+    function navigateTo(viewName) {
+      if (viewName !== 'mod1') runnerState.active = false;
+
+      VIEWS.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.classList.add('hidden');
+      });
+
+      const target = document.getElementById('view-' + viewName);
+      if (target) target.classList.remove('hidden');
+
+      const hud = document.getElementById('top-hud');
+      if (viewName === 'landing' || viewName === 'login') {
+        hud.classList.add('hidden');
+      } else {
+        hud.classList.remove('hidden');
+        updateHUD();
+      }
+
+      if (viewName === 'login') selectPortalRole('admin');
+      else if (viewName === 'dashboard') renderDashboardMissions();
+      else if (viewName === 'mod1') initMod1();
+      else if (viewName === 'mod2') initMod2();
+      else if (viewName === 'mod3') initMod3();
+      else if (viewName === 'mod4') initMod4();
+      else if (viewName === 'mod5') initMod5();
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateHUD() {
+      const avatarHTML = getAvatarSVG(gameState.avatar);
+      const hudAvatar = document.getElementById('hud-avatar');
+      if (hudAvatar) hudAvatar.innerHTML = avatarHTML;
+
+      const rank = getPlayerRank(gameState.xp);
+      const progressPct = Math.round((gameState.completedMissions.length / 5) * 100);
+
+      document.getElementById('hud-name').textContent = gameState.name || 'Pelari';
+      document.getElementById('hud-class').textContent = gameState.studentClass || 'Kelas';
+      document.getElementById('hud-level').textContent = rank;
+      document.getElementById('hud-coins').textContent = gameState.coins;
+      document.getElementById('hud-xp').textContent = gameState.xp;
+      document.getElementById('hud-progress-bar').style.width = progressPct + '%';
+      document.getElementById('hud-progress-text').textContent = progressPct + '%';
+
+      const dashAvatar = document.getElementById('dash-avatar-large');
+      if (dashAvatar) dashAvatar.innerHTML = avatarHTML;
+      document.getElementById('dash-player-name').textContent = gameState.name || 'Pelari';
+      document.getElementById('dash-class-badge').textContent = (gameState.studentClass || 'Kelas').toUpperCase();
+      document.getElementById('dash-coins').textContent = gameState.coins;
+      document.getElementById('dash-xp').textContent = gameState.xp;
+      document.getElementById('dash-missions-done').textContent = gameState.completedMissions.length + '/5';
+      document.getElementById('dash-rank-title').textContent = rank;
+      document.getElementById('dash-progress-percent').textContent = progressPct + '% Lengkap';
+      document.getElementById('dash-progress-fill').style.width = progressPct + '%';
+    }
+
+    const MISSIONS_META = [
+      { id: 1, view: 'mod1', code: 'SP 3.3.1', title: 'STESEN ILMU', subtitle: 'Jom Kenali Penulisan', desc: 'Kad nota interaktif penulisan berformat & tidak berformat serta larian pantas Subway Quiz Runner!', color: 'from-cyan-500 to-blue-700', border: 'border-cyan-400', badge: '🚉' },
+      { id: 2, view: 'mod2', code: 'SP 3.3.1', title: 'BANDAR PENULIS', subtitle: 'Misi Penulis Hebat', desc: 'Kumpul kosa kata, susun kad ayat cerita, dan bina draf karangan, surat kiriman atau catatan!', color: 'from-orange-500 to-amber-700', border: 'border-orange-400', badge: '🏙️' },
+      { id: 3, view: 'mod3', code: 'SP 3.3.2', title: 'TEROWONG DETEKTIF', subtitle: 'Misi Detektif Bahasa', desc: 'Kesan 15 kesalahan ejaan, tanda baca, imbuhan, penggunaan kata dan struktur ayat dalam terowong!', color: 'from-purple-600 to-indigo-800', border: 'border-purple-400', badge: '🔦' },
+      { id: 4, view: 'mod4', code: 'SP 3.3.2', title: 'MAKMAL EDITOR', subtitle: 'Bengkel Editor Digital', desc: 'Sunting draf karangan penuh bersama Pembantu Editor Pintar dan fahami setiap pembetulan bahasa.', color: 'from-fuchsia-600 to-purple-900', border: 'border-fuchsia-400', badge: '🧪' },
+      { id: 5, view: 'mod5', code: 'SP 3.3.1 & 3.3.2', title: 'DESTINASI JUARA', subtitle: 'Cabaran Penulis Cemerlang', desc: 'Cabaran akhir penulisan lengkap, kuiz bos akhir 10 soalan, refleksi dan Sijil Digital Juara!', color: 'from-yellow-500 to-orange-600', border: 'border-yellow-300', badge: '👑' }
+    ];
+
+    function renderDashboardMissions() {
+      const grid = document.getElementById('mission-cards-grid');
+      grid.innerHTML = MISSIONS_META.map(m => {
+        const isUnlocked = gameState.unlockAllOverride || gameState.unlockedMissions.includes(m.id);
+        const isDone = gameState.completedMissions.includes(m.id);
+        return `<div class="relative rounded-3xl border-4 ${isUnlocked ? m.border : 'border-slate-700'} bg-slate-900/95 overflow-hidden shadow-xl flex flex-col justify-between transition hover:-translate-y-1">
+          <div class="bg-gradient-to-r ${isUnlocked ? m.color : 'from-slate-800 to-slate-900'} p-4 relative overflow-hidden">
+            <div class="flex items-center justify-between relative z-10">
+              <span class="bg-slate-950/70 text-white font-black text-xs px-3 py-1 rounded-full">${m.code}</span>
+              ${isDone ? '<span class="bg-green-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full">✔ SELESAI</span>' : isUnlocked ? '<span class="bg-yellow-300 text-slate-950 font-black text-xs px-3 py-1 rounded-full animate-pulse">⚡ TERBUKA</span>' : '<span class="bg-slate-950 text-slate-400 font-black text-xs px-3 py-1 rounded-full">🔒 TERKUNCI</span>'}
+            </div>
+            <div class="mt-3 flex items-center gap-3 relative z-10">
+              <div class="w-14 h-14 rounded-2xl bg-slate-950/40 backdrop-blur flex items-center justify-center text-3xl shadow-inner">${m.badge}</div>
+              <div>
+                <h4 class="font-display font-bold text-xl text-white leading-tight">${m.id}. ${m.title}</h4>
+                <p class="text-xs font-extrabold text-yellow-200">${m.subtitle}</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between space-y-4">
+            <p class="text-sm text-slate-300 font-semibold leading-relaxed">${m.desc}</p>
+            <div>
+              ${isUnlocked ? `<button type="button" onclick="navigateTo('${m.view}')" class="w-full btn-arcade ${isDone ? 'btn-cyan' : 'btn-yellow'} font-display font-bold text-base py-3 rounded-2xl">${isDone ? '🔄 Main Semula Misi' : '▶ Mula Misi Sekarang'}</button>` : `<button type="button" disabled class="w-full bg-slate-800 text-slate-500 font-display font-bold text-sm py-3 rounded-2xl">🔒 Selesaikan Misi ${m.id - 1} Dahulu</button>`}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+
+      const unlockBtn = document.getElementById('btn-unlock-all');
+      if (unlockBtn) unlockBtn.textContent = gameState.unlockAllOverride ? '🔒 Mod Guru: Kunci Ikut Tahap' : '🔓 Mod Guru: Buka Semua Misi';
+    }
+
+    function toggleUnlockAllMissions() {
+      gameState.unlockAllOverride = !gameState.unlockAllOverride;
+      saveGameState();
+      renderDashboardMissions();
+      showToast(gameState.unlockAllOverride ? 'Semua 5 misi dibuka untuk semakan!' : 'Mod urutan misi diaktifkan semula.', '🔓');
+    }
+
+    function confirmResetProgress() {
+      const box = document.getElementById('toast-box');
+      document.getElementById('toast-icon').textContent = '⚠️';
+      document.getElementById('toast-msg').innerHTML = `Set semula semua kemajuan? <button type="button" onclick="executeResetProgress()" class="ml-2 bg-rose-600 text-white px-2.5 py-1 rounded-lg text-xs font-black">Ya, Reset</button>`;
+      box.classList.remove('hidden');
+    }
+
+    function executeResetProgress() {
+      localStorage.removeItem(STORAGE_KEY);
+      gameState = { ...DEFAULT_STATE };
+      document.getElementById('toast-box').classList.add('hidden');
+      navigateTo('landing');
+    }
+
+    const BADGES_CATALOG = [
+      { id: 'b_stesen', icon: '🚉', title: 'Perintis Stesen Ilmu', desc: 'Menamatkan Mod 1: Subway Quiz Runner.' },
+      { id: 'b_penulis', icon: '🏙️', title: 'Penulis Kota Hebat', desc: 'Menghasilkan draf penulisan di Mod 2.' },
+      { id: 'b_detektif', icon: '🔦', title: 'Detektif Terowong Bahasa', desc: 'Menyelesaikan cabaran mengesan kesalahan di Mod 3.' },
+      { id: 'b_editor', icon: '🧪', title: 'Editor Makmal Digital', desc: 'Menyunting dokumen penuh di Mod 4.' },
+      { id: 'b_juara', icon: '👑', title: 'Lencana Editor Cemerlang', desc: 'Menjuarai Cabaran Akhir di Destinasi Juara!' },
+      { id: 'b_syiling', icon: '🪙', title: 'Pengumpul Syiling Emas', desc: 'Mengumpul sekurang-kurangnya 150 syiling emas.' }
+    ];
+
+    function checkAutomaticBadges() {
+      const add = (id) => { if (!gameState.badges.includes(id)) gameState.badges.push(id); };
+      if (gameState.completedMissions.includes(1)) add('b_stesen');
+      if (gameState.completedMissions.includes(2)) add('b_penulis');
+      if (gameState.completedMissions.includes(3)) add('b_detektif');
+      if (gameState.completedMissions.includes(4)) add('b_editor');
+      if (gameState.completedMissions.includes(5)) add('b_juara');
+      if (gameState.coins >= 150) add('b_syiling');
+    }
+
+    function openAchievementsModal() {
+      checkAutomaticBadges();
+      document.getElementById('badges-grid').innerHTML = BADGES_CATALOG.map(b => {
+        const earned = gameState.badges.includes(b.id);
+        return `<div class="p-4 rounded-2xl border-2 ${earned ? 'bg-purple-950/80 border-yellow-400' : 'bg-slate-950/60 border-slate-800 opacity-60'} flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl ${earned ? 'bg-yellow-400/20' : 'bg-slate-800'} flex items-center justify-center text-3xl flex-shrink-0">${earned ? b.icon : '🔒'}</div>
+          <div>
+            <div class="font-display font-bold text-base ${earned ? 'text-yellow-300' : 'text-slate-400'}">${b.title}</div>
+            <div class="text-xs text-slate-300 font-semibold">${b.desc}</div>
+          </div>
+        </div>`;
+      }).join('');
+      document.getElementById('modal-achievements').classList.remove('hidden');
+    }
+
+    function closeAchievementsModal() { document.getElementById('modal-achievements').classList.add('hidden'); }
+
+    const MOD1_NOTES = [
+      { title: '1. Karangan (Tidak Berformat)', tag: 'Tidak Berformat', color: 'border-cyan-400', front: 'Karangan berbentuk cerita, fakta, perbincangan atau pengalaman yang ditulis dalam perenggan biasa tanpa format khusus.', back: `Struktur Utama:\n• Tajuk (pilihan)\n• Pendahuluan (1 perenggan)\n• Isi-isi Penting (3–4 perenggan)\n• Penutup (1 perenggan)\nContoh: Pengalaman Bercuti di Kampung.` },
+      { title: '2. Surat Kiriman (Berformat)', tag: 'Berformat', color: 'border-yellow-400', front: 'Terbahagi kepada Surat Kiriman Tidak Rasmi (kepada sahabat/keluarga) dan Surat Kiriman Rasmi (urusan rasmi/sekolah).', back: `Ciri Format Surat Tidak Rasmi:\n• Alamat pengirim & Tarikh (kanan atas)\n• Kata hadap & Kata panggilan hormat (Saudara/Saudari)\n• Pengakuan & Tandatangan (kanan bawah).` },
+      { title: '3. Catatan / Diari (Berformat)', tag: 'Berformat', color: 'border-orange-400', front: 'Penulisan yang merekodkan peristiwa penting mengikut urutan hari, tarikh dan masa secara kronologi.', back: `Ciri Format Catatan:\n• Tajuk catatan (huruf besar)\n• Hari & Tarikh (contoh: Sabtu, 14 Jun 2026)\n• Masa mengikut urutan (8:00 pagi, 10:30 pagi...)\nContoh: Catatan Hari Sukan Sekolah.` },
+      { title: '4. Perbandingan Berformat vs Tidak Berformat', tag: 'Tip Peperiksaan', color: 'border-purple-400', front: 'Apakah perbezaan paling ketara antara karangan berformat dengan tidak berformat?', back: `• Berformat: Mempunyai susun atur khas seperti alamat, tarikh, masa, tandatangan atau dialog.\n• Tidak Berformat: Terus dimulakan dengan perenggan pendahuluan, isi dan penutup.` }
+    ];
+
+    const MOD1_QUESTIONS = [
+      { q: 'Manakah antara berikut merupakan jenis penulisan BERFORMAT?', options: ['Karangan Cereka', 'Surat Kiriman Rasmi', 'Karangan Autobiografi'], correct: 1, explain: 'Surat Kiriman Rasmi mempunyai format khusus seperti alamat pengirim, alamat penerima, tarikh, tajuk surat dan tandatangan.' },
+      { q: 'Di manakah kedudukan alamat pengirim dan tarikh dalam Surat Kiriman Tidak Rasmi?', options: ['Sebelah kiri bawah', 'Di tengah-tengah muka surat', 'Sebelah kanan atas'], correct: 2, explain: 'Dalam Surat Kiriman Tidak Rasmi, alamat pengirim dan tarikh ditulis di bahagian penjuru kanan atas.' },
+      { q: 'Apakah ciri utama yang wajib ada dalam penulisan CATATAN harian atau aktiviti?', options: ['Senarai harga barang', 'Hari, tarikh dan masa', 'Alamat penerima surat'], correct: 1, explain: 'Catatan merekodkan peristiwa mengikut urutan waktu, maka hari, tarikh dan masa wajib ditulis.' },
+      { q: 'Karangan bertajuk "Pengalaman Bercuti di Pulau Langkawi" tergolong dalam jenis penulisan...', options: ['Tidak Berformat', 'Surat Kiriman Rasmi', 'Laporan Mesyuarat'], correct: 0, explain: 'Karangan pengalaman ditulis dalam perenggan pendahuluan, isi dan penutup biasa tanpa format khas.' },
+      { q: 'Apakah kata panggilan hormat yang sesuai untuk menulis surat kepada rakan lelaki?', options: ['Yang Berhormat,', 'Menemui sahabatku,', 'Tuan Pengarah,'], correct: 1, explain: '"Menemui sahabatku," merupakan kata panggilan mesra yang tepat untuk surat tidak rasmi kepada rakan.' },
+      { q: 'Susunan binaan karangan tidak berformat yang paling tepat ialah...', options: ['Penutup ➔ Isi ➔ Pendahuluan', 'Pendahuluan ➔ Isi ➔ Penutup', 'Isi ➔ Tandatangan ➔ Tajuk'], correct: 1, explain: 'Setiap karangan tidak berformat perlu dimulakan dengan Pendahuluan, diikuti Isi-isi Penting dan diakhiri Penutup.' },
+      { q: 'Mengapakah masa dalam penulisan Catatan perlu disusun mengikut urutan?', options: ['Supaya kronologi peristiwa jelas', 'Supaya karangan lebih panjang', 'Untuk menggantikan perenggan penutup'], correct: 0, explain: 'Susunan masa secara kronologi memudahkan pembaca memahami aliran peristiwa.' },
+      { q: 'Di bahagian manakah "Yang benar," dan tandatangan diletakkan dalam surat tidak rasmi?', options: ['Penjuru kanan bawah', 'Penjuru kiri atas', 'Selepas perenggan pertama'], correct: 0, explain: 'Pengakuan pengirim ("Yang benar,") dan tandatangan ditulis di bahagian penjuru kanan bawah surat.' },
+      { q: 'Manakah tajuk yang paling sesuai ditulis dalam bentuk CATATAN?', options: ['Aku Sebuah Basikal', 'Catatan Hari Sukan Sekolah', 'Faedah Membaca Buku'], correct: 1, explain: 'Aktiviti sepanjang hari seperti Hari Sukan Sekolah sangat sesuai direkodkan dalam bentuk Catatan.' },
+      { q: 'Apakah tujuan perenggan PENUTUP dalam sesebuah karangan?', options: ['Memperkenalkan tajuk baharu', 'Merumus keseluruhan cerita dan harapan', 'Menulis alamat rumah penulis'], correct: 1, explain: 'Perenggan penutup berfungsi merumuskan keseluruhan isi karangan serta menyatakan harapan penulis.' }
+    ];
+
+    function initMod1() {
+      document.getElementById('mod1-flashcards-grid').innerHTML = MOD1_NOTES.map(n => `
+        <div onclick="this.querySelector('.card-inner').classList.toggle('rotate-y-180')" class="perspective-1000 h-56 cursor-pointer group">
+          <div class="card-inner relative w-full h-full transform-style-3d">
+            <div class="backface-hidden absolute inset-0 bg-slate-950 ${n.color} border-2 rounded-2xl p-5 flex flex-col justify-between shadow-lg">
+              <div class="flex items-center justify-between">
+                <span class="bg-purple-800 text-cyan-200 text-xs font-extrabold px-2.5 py-1 rounded-full">${n.tag}</span>
+                <span class="text-xs font-bold text-yellow-300">Klik untuk lihat contoh ↻</span>
+              </div>
+              <h4 class="font-display font-bold text-xl text-white">${n.title}</h4>
+              <p class="text-sm text-slate-300 font-semibold leading-relaxed">${n.front}</p>
+            </div>
+            <div class="backface-hidden rotate-y-180 absolute inset-0 bg-gradient-to-br from-purple-900 to-slate-900 border-2 border-yellow-400 rounded-2xl p-5 flex flex-col justify-between shadow-lg">
+              <div class="text-xs font-black text-yellow-300 uppercase">📌 Contoh &amp; Ciri Utama</div>
+              <p class="text-xs sm:text-sm text-white font-semibold whitespace-pre-line leading-relaxed">${n.back}</p>
+              <div class="text-right text-xs text-cyan-300 font-bold">Klik lagi untuk kembali ↺</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function switchMod1Phase(phase) {
+      if (phase === 'notes') {
+        document.getElementById('mod1-phase-notes').classList.remove('hidden');
+        document.getElementById('mod1-phase-runner').classList.add('hidden');
+        runnerState.active = false;
+      } else {
+        document.getElementById('mod1-phase-notes').classList.add('hidden');
+        document.getElementById('mod1-phase-runner').classList.remove('hidden');
+        startRunnerGame();
+      }
+    }
+
+    function setRunnerLane(laneIdx) {
+      if (!runnerState.active || runnerState.paused) return;
+      runnerState.lane = Math.max(0, Math.min(2, laneIdx));
+      SoundEngine.laneSwitch();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (!runnerState.active || runnerState.paused) return;
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') setRunnerLane(runnerState.lane - 1);
+      else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') setRunnerLane(runnerState.lane + 1);
+    });
+
+    function startRunnerGame() {
+      runnerState = { active: true, qIndex: 0, lane: 1, gateY: 0.12, score: 0, lives: 3, paused: false, animId: null };
+      document.getElementById('runner-feedback-overlay').classList.add('hidden');
+      document.getElementById('runner-summary-overlay').classList.add('hidden');
+      loadRunnerQuestionUI();
+
+      const canvas = document.getElementById('runner-game-canvas');
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width || 800;
+      canvas.height = rect.height || 360;
+
+      canvas.onclick = (e) => {
+        const b = canvas.getBoundingClientRect();
+        const relX = (e.clientX - b.left) / b.width;
+        if (relX < 0.33) setRunnerLane(0);
+        else if (relX < 0.66) setRunnerLane(1);
+        else setRunnerLane(2);
+      };
+
+      if (runnerState.animId) cancelAnimationFrame(runnerState.animId);
+      runSubwayQuizLoop();
+    }
+
+    function loadRunnerQuestionUI() {
+      const q = MOD1_QUESTIONS[runnerState.qIndex];
+      document.getElementById('runner-q-counter').textContent = 'Soalan ' + (runnerState.qIndex + 1) + ' / ' + MOD1_QUESTIONS.length;
+      document.getElementById('runner-question-text').textContent = q.q;
+      document.getElementById('runner-score').textContent = runnerState.score;
+      document.getElementById('runner-lives').textContent = '❤️'.repeat(Math.max(0, runnerState.lives)) || '💔';
+      runnerState.gateY = 0.08;
+    }
+
+    function runSubwayQuizLoop() {
+      const canvas = document.getElementById('runner-game-canvas');
+      if (!canvas || !runnerState.active) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const horizonY = h * 0.22;
+
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, '#1E1B4B');
+      bg.addColorStop(0.25, '#311042');
+      bg.addColorStop(1, '#0F172A');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#1E293B';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.25, horizonY);
+      ctx.lineTo(w * 0.75, horizonY);
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fill();
+
+      const laneCentersTop = [0.34, 0.5, 0.66];
+      const laneCentersBot = [0.18, 0.5, 0.82];
+
+      for (let i = 0; i < 3; i++) {
+        ctx.strokeStyle = i === runnerState.lane ? '#00E5FF' : '#64748B';
+        ctx.lineWidth = i === runnerState.lane ? 4 : 2;
+        ctx.beginPath();
+        ctx.moveTo(w * laneCentersTop[i] - 12, horizonY);
+        ctx.lineTo(w * laneCentersBot[i] - 32, h);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(w * laneCentersTop[i] + 12, horizonY);
+        ctx.lineTo(w * laneCentersBot[i] + 32, h);
+        ctx.stroke();
+      }
+
+      if (!runnerState.paused) runnerState.gateY += 0.0026;
+
+      const q = MOD1_QUESTIONS[runnerState.qIndex];
+      const p = Math.min(1, runnerState.gateY);
+      const gateScreenY = horizonY + p * (h * 0.68);
+      const gateHeight = 36 + p * 38;
+      const gateWidth = (w * 0.16) + p * (w * 0.13);
+      const gateColors = ['#6C2BD9', '#0284C7', '#EA580C'];
+
+      for (let i = 0; i < 3; i++) {
+        const cx = w * (laneCentersTop[i] + (laneCentersBot[i] - laneCentersTop[i]) * p);
+        const gx = cx - gateWidth / 2;
+        const gy = gateScreenY - gateHeight;
+        ctx.fillStyle = gateColors[i];
+        ctx.fillRect(gx, gy, gateWidth, gateHeight);
+        ctx.strokeStyle = '#FFD600';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(gx, gy, gateWidth, gateHeight);
+
+        ctx.fillStyle = '#FFFFFF';
+        const fontSize = Math.max(11, Math.round(11 + p * 6));
+        ctx.font = 'bold ' + fontSize + 'px Nunito, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(q.options[i], cx, gy + gateHeight / 2, gateWidth - 10);
+      }
+
+      const playerX = w * laneCentersBot[runnerState.lane];
+      const playerY = h * 0.86 + Math.sin(Date.now() * 0.015) * 4;
+      ctx.fillStyle = '#00E5FF';
+      ctx.beginPath();
+      ctx.ellipse(playerX, playerY + 24, 30, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = gameState.avatar === 'maya' ? '#6C2BD9' : '#FF6D00';
+      ctx.fillRect(playerX - 14, playerY - 14, 28, 30);
+      ctx.fillStyle = '#FDBA74';
+      ctx.beginPath();
+      ctx.arc(playerX, playerY - 26, 13, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (!runnerState.paused && p >= 0.96) {
+        runnerState.paused = true;
+        handleRunnerCollision(runnerState.lane === q.correct, q);
+      }
+
+      runnerState.animId = requestAnimationFrame(runSubwayQuizLoop);
+    }
+
+    function handleRunnerCollision(isCorrect, q) {
+      const overlay = document.getElementById('runner-feedback-overlay');
+      const icon = document.getElementById('runner-fb-icon');
+      const title = document.getElementById('runner-fb-title');
+      const explain = document.getElementById('runner-fb-explain');
+
+      if (isCorrect) {
+        runnerState.score += 10;
+        addRewards(10, 20);
+        icon.textContent = '🪙';
+        title.textContent = 'TEPAT SEKALI! (+10 Syiling)';
+        title.className = 'font-display font-bold text-2xl text-yellow-300';
+      } else {
+        runnerState.lives = Math.max(1, runnerState.lives - 1);
+        SoundEngine.wrong();
+        icon.textContent = '🚧';
+        title.textContent = 'KURANG TEPAT! Jawapan: ' + q.options[q.correct];
+        title.className = 'font-display font-bold text-xl text-orange-400';
+      }
+      explain.textContent = q.explain;
+      overlay.classList.remove('hidden');
+    }
+
+    function nextRunnerQuestion() {
+      document.getElementById('runner-feedback-overlay').classList.add('hidden');
+      runnerState.qIndex++;
+      if (runnerState.qIndex >= MOD1_QUESTIONS.length) {
+        runnerState.active = false;
+        completeMission(1);
+        document.getElementById('runner-summary-stats').innerHTML = 'Anda mengumpul <span class="text-yellow-300">' + runnerState.score + ' Syiling Emas</span> dalam larian ini!';
+        document.getElementById('runner-summary-overlay').classList.remove('hidden');
+      } else {
+        runnerState.paused = false;
+        loadRunnerQuestionUI();
+      }
+    }
+
+    const MOD2_TOPICS = [
+      {
+        id: 'cuti',
+        title: 'Pengalaman Bercuti',
+        type: 'Karangan Tidak Berformat',
+        icon: '🏖️',
+        goodWords: ['Pada cuti sekolah', 'bertolak awal pagi', 'pemandangan indah', 'mandi-manda', 'mengambil gambar', 'kenangan manis'],
+        badWords: ['Yang benar,', '8:00 pagi', 'Tuan Pengarah'],
+        sentences: [
+          'Pada cuti sekolah yang lalu, saya dan keluarga telah bercuti ke Pulau Pangkor.',
+          'Kami bertolak dari rumah pada awal pagi dengan menaiki kereta ayah.',
+          'Setibanya di sana, kami bermandi-manda di pantai yang bersih dan mengambil gambar kenangan.',
+          'Percutian ini amat menyeronokkan dan menjadi kenangan manis buat kami sekeluarga.'
+        ],
+        sample: `Tajuk: Pengalaman Bercuti di Pulau Pangkor
+
+Pada cuti sekolah yang lalu, saya dan keluarga telah bercuti ke Pulau Pangkor. Kami bertolak awal pagi dengan menaiki kereta ayah yang baharu.
+
+Setibanya di jeti, kami menaiki feri menuju ke pulau tersebut. Pemandangan laut yang biru sungguh indah. Di pantai, saya dan adik bermandi-manda dengan gembira sambil membina istana pasir.
+
+Pada waktu petang, kami menikmati makanan laut yang segar sebelum pulang. Percutian ini menjadi kenangan manis yang tidak akan saya lupakan.`
+      },
+      {
+        id: 'surat',
+        title: 'Surat kepada Sahabat',
+        type: 'Surat Kiriman Tidak Rasmi (Berformat)',
+        icon: '✉️',
+        goodWords: ['Alamat & Tarikh', 'Menemui sahabatku', 'Semoga sihat', 'Berkongsi cerita', 'Sekian sahaja', 'Yang benar,'],
+        badWords: ['10:15 pagi', 'Perkara: Aduan', 'Oleh itu, kesimpulannya'],
+        sentences: [
+          'No. 12, Jalan Melati, 43000 Kajang, Selangor. (18 November 2026)',
+          'Menemui sahabatku, Aiman yang kini berada di Johor Bahru semoga berada dalam keadaan sihat.',
+          'Tujuan saya menulis surat ini adalah untuk menceritakan pengalaman saya menyertai pertandingan bercerita.',
+          'Sekian sahaja warkah saya kali ini. Yang benar, (Tandatangan).'
+        ],
+        sample: `No. 12, Jalan Melati,
+43000 Kajang,
+Selangor.
+
+18 November 2026.
+
+Menemui sahabatku, Aiman yang kini berada di Johor Bahru semoga berada dalam keadaan sihat sejahtera.
+
+Saudara,
+Apa khabar saudara di sana? Saya di sini sihat-sihat sahaja. Tujuan saya menulis surat ini adalah untuk berkongsi cerita tentang kejayaan sekolah saya menjuarai Pertandingan Bicara Berirama peringkat daerah.
+
+Sekian sahaja coretan saya pada kali ini. Sambutlah salam mesra daripada saya.
+
+Yang benar,
+Danial`
+      },
+      {
+        id: 'catatan',
+        title: 'Catatan Hari Sukan Sekolah',
+        type: 'Catatan (Berformat)',
+        icon: '🏅',
+        goodWords: ['Sabtu, 12 Julai', '7:30 pagi', 'Perbarisan lintas hormat', 'Acara balapan', 'Sorakan gemuruh', '12:30 tengah hari'],
+        badWords: ['Menemui sahabatku,', 'Yang ikhlas,', 'Alamat pengirim'],
+        sentences: [
+          'Sabtu, 12 Julai 2026 — 7:30 pagi: Semua murid dan guru berkumpul di padang sekolah.',
+          '8:15 pagi: Upacara perbarisan lintas hormat rumah sukan dirasmikan oleh Guru Besar.',
+          '10:00 pagi: Acara balapan 100 meter berlangsung meriah dengan sorakan gemuruh penonton.',
+          '12:30 tengah hari: Majlis penyampaian hadiah disempurnakan dan murid pulang dengan gembira.'
+        ],
+        sample: `CATATAN HARI SUKAN SEKOLAH
+
+Sabtu, 12 Julai 2026
+
+7:30 pagi
+Semua murid, guru dan ibu bapa berkumpul di padang sekolah yang dihias cantik dengan panji-panji rumah sukan.
+
+8:15 pagi
+Upacara perbarisan lintas hormat bermula. Pasukan Rumah Merah tampil segak dengan pakaian seragam.
+
+10:00 pagi
+Acara balapan 100 meter dan lari berganti-ganti dijalankan. Sorakan gemuruh memeriahkan suasana padang.
+
+12:30 tengah hari
+Rumah Biru diumumkan sebagai johan keseluruhan. Semua murid pulang dengan perasaan gembira.`
+      }
+    ];
+
+    let mod2State = { selectedTopic: MOD2_TOPICS[0], collectedWords: [], scrambledSentences: [] };
+
+    function initMod2() {
+      document.getElementById('m2-topics-container').innerHTML = MOD2_TOPICS.map(t => `
+        <button type="button" onclick="selectMod2Topic('${t.id}')" class="btn-arcade text-left p-5 rounded-2xl bg-slate-800 hover:bg-purple-900/70 border-2 border-purple-500 hover:border-yellow-400 transition space-y-2">
+          <div class="text-4xl">${t.icon}</div>
+          <div class="font-display font-bold text-xl text-white">${t.title}</div>
+          <span class="inline-block text-xs font-extrabold px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300">${t.type}</span>
+        </button>
+      `).join('');
+      document.getElementById('sample-guide-content').textContent = mod2State.selectedTopic.sample;
+    }
+
+    function toggleSampleGuideModal() {
+      const modal = document.getElementById('modal-sample-guide');
+      document.getElementById('sample-guide-content').textContent = mod2State.selectedTopic.sample;
+      modal.classList.toggle('hidden');
+    }
+
+    function selectMod2Topic(topicId) {
+      const topic = MOD2_TOPICS.find(t => t.id === topicId);
+      if (!topic) return;
+      mod2State.selectedTopic = topic;
+      mod2State.collectedWords = [];
+      SoundEngine.laneSwitch();
+      document.getElementById('m2-chosen-topic-label').textContent = '"' + topic.title + '"';
+      document.getElementById('m2-word-count').textContent = '0';
+      document.getElementById('m2-word-feedback').textContent = '';
+
+      const pool = [...topic.goodWords, ...topic.badWords].sort(() => Math.random() - 0.5);
+      document.getElementById('m2-word-pool').innerHTML = pool.map(w => `
+        <button type="button" onclick="collectMod2Word(this, '${w.replace(/'/g, "\\'")}')" class="btn-arcade bg-slate-800 hover:bg-slate-700 border-2 border-cyan-400/60 text-white font-bold px-4 py-2.5 rounded-2xl text-sm">+ ${w}</button>
+      `).join('');
+      activateMod2Step(2);
+    }
+
+    function activateMod2Step(stepNum) {
+      for (let i = 1; i <= 4; i++) {
+        const pill = document.getElementById('m2-step-pill-' + i);
+        pill.className = i <= stepNum ? 'py-2 px-2 rounded-xl bg-yellow-400 text-slate-950 font-black' : 'py-2 px-2 rounded-xl bg-slate-800 text-slate-400';
+      }
+      document.getElementById('m2-step-' + stepNum).classList.remove('hidden');
+    }
+
+    function collectMod2Word(btn, word) {
+      const topic = mod2State.selectedTopic;
+      const fb = document.getElementById('m2-word-feedback');
+      if (topic.goodWords.includes(word)) {
+        if (!mod2State.collectedWords.includes(word)) {
+          mod2State.collectedWords.push(word);
+          btn.disabled = true;
+          btn.className = 'bg-green-600 border-2 border-green-300 text-white font-extrabold px-4 py-2.5 rounded-2xl text-sm';
+          btn.textContent = '✔ ' + word;
+          SoundEngine.coin();
+          fb.textContent = 'Bagus! "' + word + '" sangat sesuai untuk tajuk ini.';
+          fb.className = 'text-sm font-extrabold text-green-300';
+          document.getElementById('m2-word-count').textContent = mod2State.collectedWords.length;
+          if (mod2State.collectedWords.length >= 6) {
+            prepareMod2SentenceSorter();
+            activateMod2Step(3);
+          }
+        }
+      } else {
+        SoundEngine.wrong();
+        btn.classList.add('border-rose-500', 'bg-rose-950');
+        fb.textContent = 'Ops! "' + word + '" kurang sesuai. Cuba pilih kata lain!';
+        fb.className = 'text-sm font-extrabold text-rose-400';
+      }
+    }
+
+    function prepareMod2SentenceSorter() {
+      const correct = mod2State.selectedTopic.sentences;
+      let shuffled = [...correct].sort(() => Math.random() - 0.5);
+      if (shuffled.join('|') === correct.join('|')) shuffled = [correct[2], correct[0], correct[3], correct[1]];
+      mod2State.scrambledSentences = shuffled;
+      renderMod2SentenceList();
+    }
+
+    function renderMod2SentenceList() {
+      document.getElementById('m2-sentence-list').innerHTML = mod2State.scrambledSentences.map((s, idx) => `
+        <div class="bg-slate-950 border-2 border-purple-500 rounded-2xl p-3.5 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-orange-500 text-white font-display font-bold flex items-center justify-center flex-shrink-0">${idx + 1}</span>
+            <p class="text-sm sm:text-base font-bold text-white">${s}</p>
+          </div>
+          <div class="flex gap-1.5 flex-shrink-0">
+            <button type="button" onclick="moveMod2Sentence(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="bg-slate-800 hover:bg-cyan-600 disabled:opacity-30 px-2.5 py-1.5 rounded-lg text-xs font-black">⬆️</button>
+            <button type="button" onclick="moveMod2Sentence(${idx}, 1)" ${idx === mod2State.scrambledSentences.length - 1 ? 'disabled' : ''} class="bg-slate-800 hover:bg-cyan-600 disabled:opacity-30 px-2.5 py-1.5 rounded-lg text-xs font-black">⬇️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function moveMod2Sentence(index, dir) {
+      const newIdx = index + dir;
+      if (newIdx < 0 || newIdx >= mod2State.scrambledSentences.length) return;
+      const arr = mod2State.scrambledSentences;
+      [arr[index], arr[newIdx]] = [arr[newIdx], arr[index]];
+      SoundEngine.laneSwitch();
+      renderMod2SentenceList();
+    }
+
+    function checkSentenceOrder() {
+      const correct = mod2State.selectedTopic.sentences;
+      const isMatch = mod2State.scrambledSentences.every((s, i) => s === correct[i]);
+      const fb = document.getElementById('m2-order-feedback');
+      if (isMatch) {
+        SoundEngine.correct();
+        fb.textContent = '🎉 Syabas! Susunan perenggan sangat tepat!';
+        fb.className = 'text-sm font-extrabold text-green-300';
+        document.getElementById('m2-collected-chips').textContent = mod2State.collectedWords.join(', ');
+        const saved = gameState.mod2Drafts[mod2State.selectedTopic.id];
+        if (saved) {
+          document.getElementById('m2-draft-intro').value = saved.intro || '';
+          document.getElementById('m2-draft-body').value = saved.body || '';
+          document.getElementById('m2-draft-outro').value = saved.outro || '';
+        }
+        updateMod2WordCount();
+        activateMod2Step(4);
+      } else {
+        SoundEngine.wrong();
+        fb.textContent = '⚠️ Susunan belum tepat. Pastikan Pendahuluan di atas dan Penutup di bawah.';
+        fb.className = 'text-sm font-extrabold text-orange-400';
+      }
+    }
+
+    function updateMod2WordCount() {
+      const combined = [document.getElementById('m2-draft-intro').value, document.getElementById('m2-draft-body').value, document.getElementById('m2-draft-outro').value].join(' ').trim();
+      const count = combined ? combined.split(/\s+/).length : 0;
+      document.getElementById('m2-draft-wordcount').textContent = count;
+      return count;
+    }
+
+    ['m2-draft-intro', 'm2-draft-body', 'm2-draft-outro'].forEach(id => {
+      document.addEventListener('input', (e) => { if (e.target && e.target.id === id) updateMod2WordCount(); });
+    });
+
+    function saveMod2Draft(isSubmit) {
+      const intro = document.getElementById('m2-draft-intro').value.trim();
+      const body = document.getElementById('m2-draft-body').value.trim();
+      const outro = document.getElementById('m2-draft-outro').value.trim();
+      const wc = updateMod2WordCount();
+      gameState.mod2Drafts[mod2State.selectedTopic.id] = { intro, body, outro };
+      saveGameState();
+
+      const status = document.getElementById('m2-draft-status');
+      if (!isSubmit) {
+        SoundEngine.coin();
+        status.textContent = '💾 Draf penulisan berjaya disimpan!';
+        return;
+      }
+      if (wc < 12) {
+        SoundEngine.wrong();
+        status.textContent = '⚠️ Sila tulis sekurang-kurangnya 12 patah perkataan sebelum menghantar draf.';
+        status.className = 'text-sm font-extrabold text-orange-400';
+        return;
+      }
+      addRewards(50, 80, 'Menghantar Draf Penulisan');
+      completeMission(2);
+      status.innerHTML = `🎉 Tahniah! Draf dihantar (+50 Syiling). <button type="button" onclick="navigateTo('mod3')" class="ml-3 btn-arcade btn-orange text-xs px-4 py-2 rounded-xl text-white">🚀 Teruskan ke Misi 3</button>`;
+      status.className = 'text-sm font-extrabold text-green-300';
+    }
+
+    const MOD3_QUESTIONS = [
+      { cat: 'Kesalahan Ejaan', tokens: ['Ibu', 'membeli', 'sayur-sayuran', 'segar', 'di', 'pasaraya', 'berhampiran', 'rumah.'], wrongIdx: 5, options: ['pasar raya', 'pasar-raya', 'pasarraya'], correctOpt: 'pasar raya', explain: 'Kata majmuk "pasar raya" dieja terpisah sebagai dua perkataan.', fixedSentence: 'Ibu membeli sayur-sayuran segar di pasar raya berhampiran rumah.' },
+      { cat: 'Kesalahan Ejaan', tokens: ['Murid-murid', 'digalakkan', 'mengambil', 'bahagian', 'dalam', 'aktiviti', 'ko-kurikulum', 'sekolah.'], wrongIdx: 6, options: ['kokurikulum', 'ko kurikulum', 'kokurikulam'], correctOpt: 'kokurikulum', explain: 'Imbuhan pinjaman "ko-" ditulis rapat dengan kata dasar menjadi "kokurikulum".', fixedSentence: 'Murid-murid digalakkan mengambil bahagian dalam aktiviti kokurikulum sekolah.' },
+      { cat: 'Kesalahan Ejaan', tokens: ['Ayah', 'memesan', 'sepinggan', 'kueh', 'teow', 'goreng', 'di', 'restoran', 'itu.'], wrongIdx: 3, options: ['kuetiau', 'kueh-teow', 'kuihtiau'], correctOpt: 'kuetiau', explain: 'Ejaan baku yang tepat ialah "kuetiau".', fixedSentence: 'Ayah memesan sepinggan kuetiau goreng di restoran itu.' },
+      { cat: 'Kesalahan Tanda Baca', tokens: ['"Wah,', 'cantiknya', 'lukisan', 'pemandangan', 'sawah', 'padi', 'ini."', 'kata', 'Siti.'], wrongIdx: 6, options: ['ini!"', 'ini?"', 'ini;"'], correctOpt: 'ini!"', explain: 'Ayat seruan mesti diakhiri dengan tanda seru (!).', fixedSentence: '"Wah, cantiknya lukisan pemandangan sawah padi ini!" kata Siti.' },
+      { cat: 'Kesalahan Tanda Baca', tokens: ['Bilakah', 'rombongan', 'sekolah', 'kita', 'akan', 'bertolak', 'ke', 'melaka?'], wrongIdx: 7, options: ['Melaka?', 'Melaka.', 'melaka!'], correctOpt: 'Melaka?', explain: '"Melaka" ialah Kata Nama Khas, jadi huruf pertamanya mesti huruf besar.', fixedSentence: 'Bilakah rombongan sekolah kita akan bertolak ke Melaka?' },
+      { cat: 'Kesalahan Tanda Baca', tokens: ['Emak', 'membeli', 'ikan', 'udang,', 'sotong', 'dan', 'ketam', 'di', 'pasar.'], wrongIdx: 2, options: ['ikan,', 'ikan;', 'ikan.'], correctOpt: 'ikan,', explain: 'Tanda koma (,) digunakan untuk memisahkan unsur yang disenaraikan.', fixedSentence: 'Emak membeli ikan, udang, sotong dan ketam di pasar.' },
+      { cat: 'Kesalahan Imbuhan', tokens: ['Pihak', 'kerajaan', 'bercadang', 'untuk', 'memperbesarkan', 'jalan', 'raya', 'yang', 'sempit', 'itu.'], wrongIdx: 4, options: ['memperbesar', 'membesarkan', 'diperbesar'], correctOpt: 'memperbesar', explain: 'Kata adjektif "besar" dengan awalan "memper-" tidak perlu akhiran "-kan".', fixedSentence: 'Pihak kerajaan bercadang untuk memperbesar jalan raya yang sempit itu.' },
+      { cat: 'Kesalahan Imbuhan', tokens: ['Buku', 'cerita', 'yang', 'dipinjam', 'oleh', 'Amir', 'telah', 'di', 'pulangkan', 'semalam.'], wrongIdx: 7, options: ['dipulangkan', 'di-pulangkan', 'memulangkan'], correctOpt: 'dipulangkan', explain: 'Imbuhan awalan "di-" pada kata kerja pasif mesti ditulis rapat ("dipulangkan").', fixedSentence: 'Buku cerita yang dipinjam oleh Amir telah dipulangkan semalam.' },
+      { cat: 'Kesalahan Imbuhan', tokens: ['Cikgu', 'Aina', 'sedang', 'mengemas', 'kinikan', 'rekod', 'kehadiran', 'murid', 'kelasnya.'], wrongIdx: 4, options: ['kini', 'kininya', 'mengemaskini'], correctOpt: 'kini', explain: 'Bentuk yang tepat ialah "mengemas kini".', fixedSentence: 'Cikgu Aina sedang mengemas kini rekod kehadiran murid kelasnya.' },
+      { cat: 'Kesalahan Penggunaan Kata', tokens: ['Kerajaan', 'membina', 'jalan', 'berturap', 'di', 'kawasan', 'pendalaman', 'Sabah', 'dan', 'Sarawak.'], wrongIdx: 6, options: ['pedalaman', 'kedalaman', 'dalam'], correctOpt: 'pedalaman', explain: '"Pedalaman" bermaksud kawasan terpencil jauh dari bandar.', fixedSentence: 'Kerajaan membina jalan berturap di kawasan pedalaman Sabah dan Sarawak.' },
+      { cat: 'Kesalahan Penggunaan Kata', tokens: ['Pelari', 'pecut', 'itu', 'berjaya', 'menamatkan', 'larian', 'dalam', 'tempuh', '11', 'saat.'], wrongIdx: 7, options: ['tempoh', 'menempuh', 'tertempuh'], correctOpt: 'tempoh', explain: '"Tempoh" merujuk kepada jangka masa.', fixedSentence: 'Pelari pecut itu berjaya menamatkan larian dalam tempoh 11 saat.' },
+      { cat: 'Kesalahan Penggunaan Kata', tokens: ['Abang', 'menerima', 'hadiah', 'Tokoh', 'Murid', 'Cemerlang', 'sempena', 'Hari', 'Anugerah.'], wrongIdx: 2, options: ['anugerah', 'derma', 'upah'], correctOpt: 'anugerah', explain: 'Gelaran penghormatan tinggi menggunakan perkataan "anugerah".', fixedSentence: 'Abang menerima anugerah Tokoh Murid Cemerlang sempena Hari Anugerah.' },
+      { cat: 'Kesalahan Struktur Ayat', tokens: ['Semua', 'murid-murid', 'diminta', 'beratur', 'di', 'dewan', 'sekolah', 'sekarang.'], wrongIdx: 1, options: ['murid', 'para murid-murid', 'pelajar-pelajar'], correctOpt: 'murid', explain: 'Kata bilangan "Semua" sudah membawa maksud jamak ("Semua murid").', fixedSentence: 'Semua murid diminta beratur di dewan sekolah sekarang.' },
+      { cat: 'Kesalahan Struktur Ayat', tokens: ['Kami', 'sekeluarga', 'gemar', 'makan', 'goreng', 'pisang', 'panas', 'pada', 'waktu', 'petang.'], wrongIdx: 4, options: ['pisang goreng', 'goreng-pisang', 'pisang-goreng'], correctOpt: 'pisang goreng', explain: 'Mengikut Hukum D-M, frasa yang betul ialah "pisang goreng".', fixedSentence: 'Kami sekeluarga gemar makan pisang goreng panas pada waktu petang.' },
+      { cat: 'Kesalahan Struktur Ayat', tokens: ['Sekolah', 'di', 'mana', 'saya', 'belajar', 'terletak', 'berhampiran', 'taman', 'rekreasi.'], wrongIdx: 1, options: ['tempat', 'di-mana', 'yang mana'], correctOpt: 'tempat', explain: 'Gunakan "tempat" sebagai kata hubung dalam ayat penyata.', fixedSentence: 'Sekolah tempat saya belajar terletak berhampiran taman rekreasi.' }
+    ];
+
+    let mod3State = { qIndex: 0, score: 0, answeredIds: [] };
+
+    function initMod3() {
+      const cats = ['Semua (15)', 'Kesalahan Ejaan', 'Kesalahan Tanda Baca', 'Kesalahan Imbuhan', 'Kesalahan Penggunaan Kata', 'Kesalahan Struktur Ayat'];
+      document.getElementById('m3-category-tabs').innerHTML = cats.map((c, idx) => `
+        <button type="button" onclick="jumpMod3Category(${idx})" class="btn-arcade bg-slate-800 hover:bg-purple-700 border border-purple-500/60 text-xs font-extrabold px-3 py-1.5 rounded-xl text-cyan-200">${c}</button>
+      `).join('');
+      renderMod3Question();
+    }
+
+    function jumpMod3Category(catIdx) {
+      mod3State.qIndex = catIdx === 0 ? 0 : (catIdx - 1) * 3;
+      SoundEngine.laneSwitch();
+      renderMod3Question();
+    }
+
+    function renderMod3Question() {
+      const q = MOD3_QUESTIONS[mod3State.qIndex];
+      document.getElementById('m3-score').textContent = mod3State.score;
+      document.getElementById('m3-cat-badge').textContent = 'Kategori: ' + q.cat;
+      document.getElementById('m3-q-progress').textContent = 'Kes ' + (mod3State.qIndex + 1) + ' daripada ' + MOD3_QUESTIONS.length;
+      document.getElementById('m3-correction-box').classList.add('hidden');
+      document.getElementById('m3-feedback-box').classList.add('hidden');
+
+      document.getElementById('m3-sentence-tokens').innerHTML = q.tokens.map((tok, idx) => `
+        <button type="button" onclick="selectMod3Token(${idx})" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-500/30 border-2 border-slate-700 hover:border-cyan-400 text-white transition">${tok}</button>
+      `).join('');
+    }
+
+    function selectMod3Token(idx) {
+      const q = MOD3_QUESTIONS[mod3State.qIndex];
+      const buttons = document.getElementById('m3-sentence-tokens').querySelectorAll('button');
+      if (idx === q.wrongIdx) {
+        SoundEngine.laneSwitch();
+        buttons[idx].className = 'px-3 py-1.5 rounded-xl bg-orange-500 border-2 border-yellow-300 text-white font-black animate-pulse';
+        document.getElementById('m3-selected-wrong').textContent = q.tokens[idx];
+        document.getElementById('m3-correction-options').innerHTML = q.options.map(opt => `
+          <button type="button" onclick="submitMod3Correction('${opt.replace(/'/g, "\\'")}')" class="btn-arcade bg-slate-800 hover:bg-purple-700 border-2 border-cyan-400 py-3 px-4 rounded-xl font-bold text-white text-sm sm:text-base">${opt}</button>
+        `).join('');
+        document.getElementById('m3-correction-box').classList.remove('hidden');
+      } else {
+        SoundEngine.wrong();
+        buttons[idx].className = 'px-3 py-1.5 rounded-xl bg-rose-950 border-2 border-rose-500 text-rose-300';
+        showToast('Perkataan itu sudah betul! Cuba periksa perkataan lain.', '🔦');
+      }
+    }
+
+    function submitMod3Correction(chosenOpt) {
+      const q = MOD3_QUESTIONS[mod3State.qIndex];
+      const fbBox = document.getElementById('m3-feedback-box');
+      const fbHeader = document.getElementById('m3-fb-header');
+      document.getElementById('m3-correction-box').classList.add('hidden');
+      fbBox.classList.remove('hidden');
+
+      if (chosenOpt === q.correctOpt) {
+        if (!mod3State.answeredIds.includes(mod3State.qIndex)) {
+          mod3State.answeredIds.push(mod3State.qIndex);
+          mod3State.score++;
+          addRewards(10, 15);
+        }
+        fbBox.className = 'rounded-2xl p-4 border-2 border-green-400 bg-green-950/60 space-y-2 animate-pop';
+        fbHeader.textContent = '🎉 Syabas Detektif! Pembetulan Tepat (+10 Syiling)';
+        fbHeader.className = 'font-display font-bold text-xl text-green-300';
+      } else {
+        SoundEngine.wrong();
+        fbBox.className = 'rounded-2xl p-4 border-2 border-orange-400 bg-orange-950/60 space-y-2 animate-pop';
+        fbHeader.textContent = '⚠️ Hampir Tepat! Jawapan Sebenar: "' + q.correctOpt + '"';
+        fbHeader.className = 'font-display font-bold text-xl text-orange-300';
+      }
+      document.getElementById('m3-fb-explanation').textContent = q.explain;
+      document.getElementById('m3-fb-correct-sentence').textContent = q.fixedSentence;
+      document.getElementById('m3-score').textContent = mod3State.score;
+    }
+
+    function nextDetectiveQuestion() {
+      mod3State.qIndex++;
+      if (mod3State.qIndex >= MOD3_QUESTIONS.length) {
+        completeMission(3);
+        showToast('Tahniah! Semua kes selesai. Misi 4 dibuka!', '🏆');
+        navigateTo('mod4');
+      } else {
+        renderMod3Question();
+      }
+    }
+
+    const MOD4_RAW_TEXT = `Pada hari sabtu yang lalu, Persatuan Bahasa Melayu sekolah saya telah mengadakan lawatan sambil belajar ke Muzium Negara di kuala lumpur. Rombongan kami terdiri daripada 35 orang murid-murid dan empat orang guru pengiring.
+
+Setibanya di sana, kami disambut mesra oleh pegawai muzium. Beliau memperjelaskan sejarah kemerdekaan negara kepada kami dengan penuh semangat. Kami juga berpeluang melihat pelbagai artifak lama yang di pamerkan di galeri utama.
+
+Selain itu, kami mencatat maklumat penting dalam buku nota sebagai rujukan. Lawatan ini amat berfaedah kerana dapat menambah ilmu pengetahuan kami tentang sejarah tanah air?`;
+
+    const MOD4_SUGGESTIONS = [
+      { id: 's1', category: 'Tanda Baca (Huruf Besar)', original: 'hari sabtu', suggested: 'hari Sabtu', reason: 'Nama hari ("Sabtu") ialah Kata Nama Khas dan bermula dengan huruf besar.', quizQ: 'Mengapakah "Sabtu" menggunakan huruf besar?', quizOpts: ['Kata Nama Khas', 'Kata kerja'], quizAns: 0 },
+      { id: 's2', category: 'Tanda Baca (Nama Tempat)', original: 'di kuala lumpur', suggested: 'di Kuala Lumpur', reason: '"Kuala Lumpur" ialah Kata Nama Khas.', quizQ: 'Jenis kata bagi "Kuala Lumpur"?', quizOpts: ['Kata Adjektif', 'Kata Nama Khas'], quizAns: 1 },
+      { id: 's3', category: 'Struktur Ayat (Kata Bilangan)', original: '35 orang murid-murid', suggested: '35 orang murid', reason: 'Kata bilangan "35 orang" sudah menunjukkan jamak.', quizQ: 'Bolehkah digandakan selepas "35 orang"?', quizOpts: ['Tidak boleh (Lewah)', 'Boleh sentiasa'], quizAns: 0 },
+      { id: 's4', category: 'Imbuhan', original: 'memperjelaskan', suggested: 'menjelaskan', reason: 'Bentuk imbuhan yang gramatis ialah "menjelaskan".', quizQ: 'Bentuk kata kerja yang gramatis?', quizOpts: ['menjelaskan', 'memperjelaskan'], quizAns: 0 },
+      { id: 's5', category: 'Ejaan Imbuhan di-', original: 'di pamerkan', suggested: 'dipamerkan', reason: 'Awalan "di-" pada kata kerja pasif ditulis rapat.', quizQ: 'Ejaan awalan "di-" pada kata kerja?', quizOpts: ['Dieja rapat', 'Dieja jarak'], quizAns: 0 },
+      { id: 's6', category: 'Tanda Baca (Akhir Ayat)', original: 'sejarah tanah air?', suggested: 'sejarah tanah air.', reason: 'Ayat penyata diakhiri dengan tanda noktah (.).', quizQ: 'Tanda baca akhir ayat penyata?', quizOpts: ['Tanda noktah (.)', 'Tanda soal (?)'], quizAns: 0 }
+    ];
+
+    let mod4State = { reviewedIds: [], decisions: {} };
+
+    function initMod4() {
+      const area = document.getElementById('m4-editor-textarea');
+      if (!area.value.trim()) area.value = MOD4_RAW_TEXT;
+      document.getElementById('m4-review-counter').textContent = mod4State.reviewedIds.length + ' / ' + MOD4_SUGGESTIONS.length + ' Disemak';
+    }
+
+    function resetMod4Document() {
+      document.getElementById('m4-editor-textarea').value = MOD4_RAW_TEXT;
+      mod4State = { reviewedIds: [], decisions: {} };
+      document.getElementById('m4-ai-placeholder').classList.remove('hidden');
+      document.getElementById('m4-suggestions-list').classList.add('hidden');
+      document.getElementById('m4-review-counter').textContent = '0 / 6 Disemak';
+    }
+
+    function runSimulatedAIAssistant() {
+      SoundEngine.laneSwitch();
+      document.getElementById('m4-ai-placeholder').classList.add('hidden');
+      const list = document.getElementById('m4-suggestions-list');
+      list.classList.remove('hidden');
+
+      list.innerHTML = MOD4_SUGGESTIONS.map(s => {
+        const decision = mod4State.decisions[s.id];
+        return `<div class="bg-slate-950 border-2 ${decision === 'accepted' ? 'border-green-400' : decision === 'rejected' ? 'border-amber-400' : 'border-purple-500'} rounded-2xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">${s.category}</span>
+            ${decision ? `<span class="text-xs font-extrabold ${decision === 'accepted' ? 'text-green-400' : 'text-amber-300'}">${decision === 'accepted' ? '✔ Diterima' : '✖ Ditolak'}</span>` : ''}
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+            <div class="bg-rose-950/60 border border-rose-500/40 p-2 rounded-xl"><span class="text-rose-300 font-extrabold block text-[11px]">ASAL:</span><span class="line-through text-slate-200 font-bold">${s.original}</span></div>
+            <div class="bg-green-950/60 border border-green-500/40 p-2 rounded-xl"><span class="text-green-300 font-extrabold block text-[11px]">CADANGAN:</span><span class="text-white font-extrabold">${s.suggested}</span></div>
+          </div>
+          <p class="text-xs text-slate-300 font-semibold">💡 <strong>Sebab:</strong> ${s.reason}</p>
+          <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="text-[11px] font-extrabold text-yellow-300">Semakan: ${s.quizQ}</div>
+            <div class="flex flex-wrap gap-2">
+              ${s.quizOpts.map((opt, idx) => `<button type="button" onclick="handleMod4Decision('${s.id}', 'accepted', ${idx === s.quizAns})" class="btn-arcade bg-green-700 hover:bg-green-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg">✔ Terima (${opt})</button>`).join('')}
+              <button type="button" onclick="handleMod4Decision('${s.id}', 'rejected', true)" class="btn-arcade bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-600">✖ Tolak</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function handleMod4Decision(sugId, action, understood) {
+      const s = MOD4_SUGGESTIONS.find(item => item.id === sugId);
+      if (!s) return;
+      if (action === 'accepted' && !understood) {
+        SoundEngine.wrong();
+        showToast('Sila pilih sebab tatabahasa yang betul!', '💡');
+        return;
+      }
+      const area = document.getElementById('m4-editor-textarea');
+      if (action === 'accepted' && area.value.includes(s.original)) {
+        area.value = area.value.replace(s.original, s.suggested);
+        SoundEngine.coin();
+      } else {
+        SoundEngine.laneSwitch();
+      }
+      mod4State.decisions[sugId] = action;
+      if (!mod4State.reviewedIds.includes(sugId)) {
+        mod4State.reviewedIds.push(sugId);
+        addRewards(10, 15);
+      }
+      document.getElementById('m4-review-counter').textContent = mod4State.reviewedIds.length + ' / ' + MOD4_SUGGESTIONS.length + ' Disemak';
+      runSimulatedAIAssistant();
+    }
+
+    function submitMod4Workshop() {
+      if (mod4State.reviewedIds.length < 4) {
+        SoundEngine.wrong();
+        showToast('Sila semak sekurang-kurangnya 4 cadangan Pembantu Editor dahulu!', '🤖');
+        return;
+      }
+      addRewards(40, 60, 'Bengkel Editor Selesai');
+      completeMission(4);
+      navigateTo('mod5');
+    }
+
+    const MOD5_BOSS_QUIZ = [
+      { q: 'Apakah format wajib di bahagian kanan atas Surat Kiriman Tidak Rasmi?', opts: ['Alamat pengirim dan tarikh', 'Nama Guru Besar', 'Masa mengikut urutan', 'Tandatangan saksi'], ans: 0 },
+      { q: 'Manakah ejaan kata majmuk yang BETUL?', opts: ['antarabangsa', 'antara bangsa', 'antarabangsah', 'antara-bangsa'], ans: 0 },
+      { q: 'Pilih ayat yang menggunakan tanda baca yang BETUL.', opts: ['"Amboi, segaknya kamu hari ini!" puji ibu.', '"Amboi, segaknya kamu hari ini." puji ibu.', '"Amboi segaknya kamu hari ini?" puji ibu.', '"amboi, segaknya kamu hari ini!" puji ibu.'], ans: 0 },
+      { q: 'Imbuhan manakah yang tepat: "Pekerja itu sedang _____ longkang yang tersumbat."', opts: ['memperdalam', 'memperdalamkan', 'diperdalamkan', 'kedalaman'], ans: 0 },
+      { q: 'Apakah tujuan utama perenggan pendahuluan dalam karangan tidak berformat?', opts: ['Memperkenalkan tajuk dan gambaran umum cerita', 'Menyenaraikan semua penutup cerita', 'Menulis alamat pengirim', 'Merekodkan jadual masa'], ans: 0 },
+      { q: 'Pilih penggunaan kata yang paling tepat: "Nenek menyimpan barang kemas di dalam _____ besi."', opts: ['peti', 'kotak kertas', 'sampul', 'bakul'], ans: 0 },
+      { q: 'Manakah ayat yang mempunyai struktur ayat yang GRAMATIS?', opts: ['Semua peserta pertandingan berkumpul di dewan.', 'Semua peserta-peserta pertandingan berkumpul di dewan.', 'Peserta-peserta semua berkumpul dewan.', 'Semua peserta berkumpul di mana dewan.'], ans: 0 },
+      { q: 'Dalam penulisan Catatan, peristiwa hendaklah disusun mengikut...', opts: ['Urutan masa (kronologi)', 'Susunan abjad', 'Nombor telefon', 'Alamat rumah'], ans: 0 },
+      { q: 'Pilih ejaan yang betul bagi kata pinjaman bahasa Inggeris:', opts: ['teknologi', 'teknoloji', 'tegnologi', 'teknologee'], ans: 0 },
+      { q: 'Apakah langkah terakhir sebelum menghantar sesebuah hasil penulisan?', opts: ['Menyemak dan memurnikan ejaan, tanda baca dan ayat', 'Memadamkan perenggan pendahuluan', 'Menukar tajuk kepada bahasa asing', 'Menggandakan semua kata nama'], ans: 0 }
+    ];
+
+    let mod5State = { quizIdx: 0, quizScore: 0, quizAnswered: false };
+
+    function initMod5() {
+      if (gameState.mod5Essay) document.getElementById('m5-essay-editor').value = gameState.mod5Essay;
+      setBossStage(1);
+    }
+
+    function setBossStage(stage) {
+      for (let i = 1; i <= 4; i++) {
+        const tab = document.getElementById('m5-tab-' + i);
+        const pane = document.getElementById('m5-stage-' + i);
+        if (i === stage) {
+          tab.className = 'py-2 px-2 rounded-xl bg-yellow-400 text-slate-950 font-black';
+          pane.classList.remove('hidden');
+        } else {
+          tab.className = i < stage ? 'py-2 px-2 rounded-xl bg-green-600 text-white font-extrabold' : 'py-2 px-2 rounded-xl bg-slate-800 text-slate-400';
+          pane.classList.add('hidden');
+        }
+      }
+    }
+
+    function saveBossEssay() {
+      const topic = document.querySelector('input[name="bossTopic"]:checked').value;
+      const text = document.getElementById('m5-essay-editor').value.trim();
+      gameState.mod5Topic = topic;
+      gameState.mod5Essay = text;
+      saveGameState();
+      SoundEngine.coin();
+      showToast('Karangan akhir berjaya disimpan!', '💾');
+    }
+
+    function downloadBossEssayTxt() {
+      const topic = document.querySelector('input[name="bossTopic"]:checked')?.value || gameState.mod5Topic;
+      const text = document.getElementById('m5-essay-editor').value.trim() || gameState.mod5Essay || '(Tiada kandungan)';
+      const content = `MISI EDITOR CILIK: THE ULTIMATE BAHASA MELAYU RUN!
+Nama Murid: ${gameState.name}
+Kelas: ${gameState.studentClass}
+Tajuk: ${topic}
+--------------------------------------------------
+
+${text}`;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Karangan_' + (gameState.name || 'Murid').replace(/\s+/g, '_') + '.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Fail karangan (.TXT) dimuat turun!', '📄');
+    }
+
+    function proceedToBossQuiz() {
+      const text = document.getElementById('m5-essay-editor').value.trim();
+      const wc = text ? text.split(/\s+/).length : 0;
+      if (wc < 15) {
+        SoundEngine.wrong();
+        showToast('Sila tulis karangan sekurang-kurangnya 15 patah perkataan dahulu!', '✍️');
+        return;
+      }
+      saveBossEssay();
+      mod5State = { quizIdx: 0, quizScore: 0, quizAnswered: false };
+      setBossStage(2);
+      renderBossQuizQuestion();
+    }
+
+    function renderBossQuizQuestion() {
+      const q = MOD5_BOSS_QUIZ[mod5State.quizIdx];
+      mod5State.quizAnswered = false;
+      document.getElementById('m5-quiz-counter').textContent = 'Soalan ' + (mod5State.quizIdx + 1) + ' / ' + MOD5_BOSS_QUIZ.length;
+      document.getElementById('m5-quiz-question').textContent = q.q;
+      document.getElementById('m5-quiz-feedback').classList.add('hidden');
+      document.getElementById('m5-quiz-next-wrap').classList.add('hidden');
+      document.getElementById('m5-quiz-options').innerHTML = q.opts.map((opt, idx) => `
+        <button type="button" onclick="answerBossQuiz(${idx})" class="btn-arcade text-left p-3.5 rounded-2xl bg-slate-800 hover:bg-purple-800 border-2 border-purple-500 text-white font-bold text-sm sm:text-base">${String.fromCharCode(65 + idx)}. ${opt}</button>
+      `).join('');
+    }
+
+    function answerBossQuiz(chosenIdx) {
+      if (mod5State.quizAnswered) return;
+      mod5State.quizAnswered = true;
+      const q = MOD5_BOSS_QUIZ[mod5State.quizIdx];
+      const fb = document.getElementById('m5-quiz-feedback');
+      fb.classList.remove('hidden');
+      if (chosenIdx === q.ans) {
+        mod5State.quizScore += 10;
+        addRewards(10, 20);
+        fb.className = 'p-3.5 rounded-xl text-sm font-extrabold bg-green-950/80 border border-green-400 text-green-300';
+        fb.textContent = '🎉 Tepat sekali! (+10 Syiling Emas)';
+      } else {
+        SoundEngine.wrong();
+        fb.className = 'p-3.5 rounded-xl text-sm font-extrabold bg-rose-950/80 border border-rose-400 text-rose-300';
+        fb.textContent = '❌ Kurang tepat. Jawapan yang betul ialah: ' + q.opts[q.ans];
+      }
+      document.getElementById('m5-quiz-next-wrap').classList.remove('hidden');
+    }
+
+    function nextBossQuizQuestion() {
+      mod5State.quizIdx++;
+      if (mod5State.quizIdx >= MOD5_BOSS_QUIZ.length) setBossStage(3);
+      else renderBossQuizQuestion();
+    }
+
+    function completeFinalChampionMission() {
+      const r1 = document.getElementById('m5-ref-1').value.trim();
+      const r2 = document.getElementById('m5-ref-2').value.trim();
+      if (!r1 || !r2) {
+        SoundEngine.wrong();
+        showToast('Sila lengkapkan kedua-dua soalan refleksi pembelajaran!', '📝');
+        return;
+      }
+      addRewards(100, 150, 'Juara Editor Cilik!');
+      completeMission(5);
+      SoundEngine.unlock();
+      setBossStage(4);
+      document.getElementById('m5-final-summary-text').innerHTML = `Markah Kuiz Akhir: <span class="text-cyan-300">${mod5State.quizScore}/100</span> • Jumlah Syiling Emas: <span class="text-yellow-300">${gameState.coins}</span>`;
+      renderDigitalCertificate();
+    }
+
+    function renderDigitalCertificate() {
+      const canvas = document.getElementById('certificate-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.fillStyle = '#FFFDF7';
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = '#6C2BD9';
+      ctx.lineWidth = 22;
+      ctx.strokeRect(18, 18, w - 36, h - 36);
+      ctx.strokeStyle = '#FFD600';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(36, 36, w - 72, h - 72);
+      ctx.fillStyle = '#2E1065';
+      ctx.fillRect(39, 39, w - 78, 120);
+      ctx.fillStyle = '#FFD600';
+      ctx.font = 'bold 38px Fredoka, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('SIJIL PENCAPAIAN EDITOR CILIK', w / 2, 95);
+      ctx.fillStyle = '#00E5FF';
+      ctx.font = 'bold 18px Nunito, sans-serif';
+      ctx.fillText('MISI EDITOR CILIK: THE ULTIMATE BAHASA MELAYU RUN! (SK 3.3)', w / 2, 132);
+      ctx.fillStyle = '#334155';
+      ctx.font = 'bold 22px Nunito, sans-serif';
+      ctx.fillText('Dengan ini diperakui bahawa', w / 2, 220);
+      ctx.fillStyle = '#6C2BD9';
+      ctx.font = 'bold 48px Fredoka, sans-serif';
+      ctx.fillText((gameState.name || 'MURID CEMERLANG').toUpperCase(), w / 2, 285);
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 26px Nunito, sans-serif';
+      ctx.fillText('Kelas: ' + (gameState.studentClass || '-'), w / 2, 345);
+      ctx.fillStyle = '#334155';
+      ctx.font = '600 20px Nunito, sans-serif';
+      ctx.fillText('Telah berjaya menamatkan kelima-lima cabaran interaktif penulisan dan penyuntingan', w / 2, 405);
+      ctx.fillText('Bahasa Melayu (Standard Pembelajaran 3.3.1 & 3.3.2) dengan cemerlang serta meraih', w / 2, 435);
+      ctx.fillStyle = '#EA580C';
+      ctx.font = 'bold 30px Fredoka, sans-serif';
+      ctx.fillText('★ LENCANA EDITOR CEMERLANG ★', w / 2, 488);
+    }
+
+    function downloadCertificatePNG() {
+      const canvas = document.getElementById('certificate-canvas');
+      if (!canvas) return;
+      const link = document.createElement('a');
+      link.download = 'Sijil_Editor_Cilik_' + (gameState.name || 'Murid').replace(/\s+/g, '_') + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Sijil Digital (PNG) berjaya dimuat turun!', '🏆');
+    }
+
+    const PORTAL_KEY = 'misiEditorCilikPortal_v3';
+    let portalData = JSON.parse(localStorage.getItem(PORTAL_KEY) || '{"teachers":[],"classes":[],"students":[]}');
+    let activeTeacher = null;
+
+    function savePortalData() { localStorage.setItem(PORTAL_KEY, JSON.stringify(portalData)); }
+
+    function selectPortalRole(role) {
+      document.getElementById('portal-role').value = role;
+      document.querySelectorAll('.role-choice').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+      document.getElementById('portal-user-label').textContent = role === 'admin' ? 'ID Admin' : role === 'teacher' ? 'ID Guru' : 'ID Murid';
+      document.getElementById('portal-username').placeholder = role === 'student' ? 'Contoh: MURID001' : role === 'teacher' ? 'ID yang diberikan admin' : 'admin';
+      document.getElementById('portal-password').placeholder = role === 'student' ? 'Masukkan PIN' : 'Masukkan kata laluan';
+      document.getElementById('portal-login-message').textContent = '';
+    }
+
+    function hidePortalPanels() {
+      ['portal-login', 'portal-admin-panel', 'portal-teacher-panel'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    }
+
+    function quickStudentDemoLogin() {
+      gameState = { ...DEFAULT_STATE, name: 'Zafri', studentClass: '5 Bestari', avatar: 'zafri', studentId: 'DEMO001' };
+      saveGameState();
+      SoundEngine.init();
+      SoundEngine.startBGM();
+      navigateTo('dashboard');
+    }
+
+    function portalLogin(e) {
+      e.preventDefault();
+      const role = document.getElementById('portal-role').value;
+      const id = document.getElementById('portal-username').value.trim();
+      const pass = document.getElementById('portal-password').value;
+      const msg = document.getElementById('portal-login-message');
+
+      if (role === 'admin' && id === 'admin' && pass === 'admin123') {
+        hidePortalPanels();
+        document.getElementById('portal-admin-panel').classList.remove('hidden');
+        renderTeacherList();
+        return;
+      }
+      if (role === 'teacher') {
+        const t = portalData.teachers.find(x => x.id.toLowerCase() === id.toLowerCase() && x.password === pass);
+        if (t) {
+          activeTeacher = t;
+          hidePortalPanels();
+          document.getElementById('portal-teacher-panel').classList.remove('hidden');
+          document.getElementById('teacher-welcome').textContent = 'Selamat datang, ' + t.name;
+          renderTeacherPanel();
+          return;
+        }
+      }
+      if (role === 'student') {
+        const st = portalData.students.find(x => x.id.toLowerCase() === id.toLowerCase() && x.pin === pass);
+        if (st) {
+          if (!gameState.name || gameState.studentId !== st.id) {
+            gameState = { ...DEFAULT_STATE, name: st.name, studentClass: st.className, avatar: 'zafri', studentId: st.id };
+          }
+          saveGameState();
+          SoundEngine.init();
+          SoundEngine.startBGM();
+          hidePortalPanels();
+          document.getElementById('portal-login').classList.remove('hidden');
+          navigateTo('dashboard');
+          return;
+        }
+      }
+      msg.textContent = 'ID atau kata laluan/PIN tidak tepat. Sila cuba lagi.';
+    }
+
+    function createTeacher(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-teacher-name').value.trim();
+      const id = document.getElementById('new-teacher-id').value.trim();
+      const password = document.getElementById('new-teacher-pass').value;
+      if (portalData.teachers.some(t => t.id.toLowerCase() === id.toLowerCase())) {
+        showToast('ID guru sudah digunakan.', '⚠️');
+        return;
+      }
+      portalData.teachers.push({ name, id, password });
+      savePortalData();
+      e.target.reset();
+      renderTeacherList();
+      showToast('Akaun guru berjaya didaftarkan.', '👩‍🏫');
+    }
+
+    function escapePortalText(v) {
+      return String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function renderTeacherList() {
+      const el = document.getElementById('teacher-list');
+      el.innerHTML = portalData.teachers.length
+        ? portalData.teachers.map(t => `<div class="portal-list-item"><span>${escapePortalText(t.name)}</span><span>ID: ${escapePortalText(t.id)}</span></div>`).join('')
+        : '<p class="text-slate-400 text-xs">Belum ada guru didaftarkan.</p>';
+    }
+
+    function renderTeacherPanel() {
+      const classes = portalData.classes.filter(c => c.teacherId === activeTeacher.id);
+      document.getElementById('class-list').innerHTML = classes.length
+        ? classes.map(c => `<span class="bg-purple-700 text-white text-xs font-black rounded-full px-3 py-2">${escapePortalText(c.name)}</span>`).join('')
+        : '<span class="text-slate-400 text-xs">Belum ada kelas.</span>';
+
+      const select = document.getElementById('new-student-class');
+      select.innerHTML = '<option value="">Pilih kelas</option>' + classes.map(c => `<option value="${escapePortalText(c.name)}">${escapePortalText(c.name)}</option>`).join('');
+
+      const students = portalData.students.filter(st => st.teacherId === activeTeacher.id);
+      document.getElementById('student-list').innerHTML = students.length
+        ? students.map(st => `<div class="portal-list-item"><span>${escapePortalText(st.name)} · ${escapePortalText(st.className)}</span><span>ID: ${escapePortalText(st.id)}</span></div>`).join('')
+        : '<p class="text-slate-400 text-xs">Belum ada murid didaftarkan.</p>';
+    }
+
+    function createClass(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-class-name').value.trim();
+      if (portalData.classes.some(c => c.teacherId === activeTeacher.id && c.name.toLowerCase() === name.toLowerCase())) {
+        showToast('Kelas ini sudah wujud.', '⚠️');
+        return;
+      }
+      portalData.classes.push({ name, teacherId: activeTeacher.id });
+      savePortalData();
+      e.target.reset();
+      renderTeacherPanel();
+      showToast('Kelas berjaya ditambah.', '🏫');
+    }
+
+    function createStudent(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-student-name').value.trim();
+      const id = document.getElementById('new-student-id').value.trim();
+      const pin = document.getElementById('new-student-pin').value;
+      const className = document.getElementById('new-student-class').value;
+      if (!className) {
+        showToast('Sila daftar dan pilih kelas dahulu.', '⚠️');
+        return;
+      }
+      if (portalData.students.some(st => st.id.toLowerCase() === id.toLowerCase())) {
+        showToast('ID murid sudah digunakan.', '⚠️');
