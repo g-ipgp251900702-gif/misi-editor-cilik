@@ -39,20 +39,7 @@
       cursor: not-allowed;
     }
 
-    /* Graffiti & Street Art Text Effects */
-    .graffiti-title {
-      text-shadow:
-        0 4px 0 #1E1B4B,
-        0 8px 0 #FF6D00,
-        0 12px 24px rgba(0, 229, 255, 0.55);
-      letter-spacing: 0.03em;
-    }
-
-    .graffiti-sub {
-      text-shadow: 0 3px 0 #1E1B4B, 0 0 15px rgba(255, 214, 0, 0.6);
-    }
-
-    /* Urban Graffiti Brick Pattern Background */
+    /* Urban Graffiti Brick Pattern Background (Untuk Dashboard & Modul Permainan) */
     .urban-bg {
       background-color: #1A0B3B;
       background-image:
@@ -60,6 +47,30 @@
         radial-gradient(circle at 85% 30%, rgba(0, 229, 255, 0.25) 0%, transparent 45%),
         radial-gradient(circle at 50% 85%, rgba(255, 109, 0, 0.28) 0%, transparent 50%),
         linear-gradient(180deg, #160936 0%, #0F172A 100%);
+    }
+
+    /* Latar Belakang Khas Muka Hadapan (Berdasarkan Gambar Rujukan Jingga Keemasan) */
+    .front-hero-bg {
+      background-color: #FF9800;
+      background-image:
+        linear-gradient(180deg, rgba(255, 145, 0, 0.25) 0%, rgba(230, 81, 0, 0.45) 75%, rgba(26, 11, 59, 0.85) 100%),
+        url('bg-subway.jpg'),
+        radial-gradient(circle at 50% 42%, #FFE082 0%, #FFB300 35%, #FF8F00 70%, #E65100 100%);
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    /* Latar Belakang Halaman Log Masuk */
+    .login-screen-bg {
+      background-color: #1E1035;
+      background-image:
+        linear-gradient(180deg, rgba(19, 9, 41, 0.78) 0%, rgba(15, 23, 42, 0.92) 100%),
+        url('bg-subway.jpg'),
+        radial-gradient(circle at 50% 20%, #FF9800 0%, #6C2BD9 55%, #0F172A 100%);
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
     }
 
     /* Arcade 3D Tactile Buttons */
@@ -98,6 +109,12 @@
       color: #FFFFFF;
       box-shadow: 0 6px 0 #14532D, 0 12px 20px rgba(34, 197, 94, 0.35);
     }
+    .btn-mula-hero {
+      background: linear-gradient(180deg, #22C55E 0%, #15803D 100%);
+      color: #FFFFFF;
+      border: 4px solid #FEF08A;
+      box-shadow: 0 8px 0 #14532D, 0 18px 35px rgba(0, 0, 0, 0.45);
+    }
 
     /* Animations */
     @keyframes floatSlow {
@@ -109,10 +126,6 @@
       50% { transform: scaleX(0.2); }
       100% { transform: scaleX(1); }
     }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 16px rgba(0, 229, 255, 0.5); }
-      50% { box-shadow: 0 0 32px rgba(255, 214, 0, 0.85); }
-    }
     @keyframes popIn {
       0% { opacity: 0; transform: scale(0.85) translateY(15px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -120,7 +133,6 @@
 
     .animate-float { animation: floatSlow 3.2s ease-in-out infinite; }
     .animate-coin { animation: spinCoin 1.2s linear infinite; }
-    .animate-glow { animation: pulseGlow 2.4s ease-in-out infinite; }
     .animate-pop { animation: popIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
     /* Custom Scrollbar */
@@ -135,52 +147,78 @@
     .backface-hidden { backface-visibility: hidden; }
     .rotate-y-180 { transform: rotateY(180deg); }
 
-    /* Canvas responsive container */
     canvas {
       display: block;
       touch-action: manipulation;
     }
 
-    /* 3D front-page scene */
-    .portal-scene{position:absolute;inset:0;overflow:hidden;perspective:900px;background:linear-gradient(#6bbcf0 0%,#b8dff5 42%,#d18a69 100%)}
-    .portal-sky{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 34%,#e0f5ff88,transparent 48%),linear-gradient(180deg,#60b8f4 0%,#b9d9ed 50%,#f5b58a 100%)}
-    .portal-city{position:absolute;bottom:25%;height:62%;width:42%;display:flex;align-items:stretch;gap:8px;transform-style:preserve-3d}
-    .city-left{left:-5%;transform:perspective(600px) rotateY(22deg);justify-content:flex-start}
-    .city-right{right:-5%;transform:perspective(600px) rotateY(-22deg);justify-content:flex-end}
-    .portal-city i{display:block;flex:1;background:linear-gradient(90deg,#754d50,#b87868 48%,#543d4c);border:5px solid #533e4b;box-shadow:inset 0 0 0 3px #e2a58a,12px 12px 20px #26334a55;position:relative}
-    .portal-city i:after{content:"";position:absolute;inset:12% 12%;background:repeating-linear-gradient(90deg,transparent 0 22px,#273c68 23px 40px,transparent 41px 58px),repeating-linear-gradient(0deg,transparent 0 30px,#273c68 31px 47px,transparent 48px 65px);opacity:.9}
-    .portal-street{position:absolute;left:10%;right:10%;bottom:-20%;height:62%;background:linear-gradient(90deg,#d5a18d,#f4d0ae 48%,#c98d79);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);border-top:5px solid #a86c60}
-    .portal-track{position:absolute;bottom:-12%;height:70%;width:5px;background:linear-gradient(#9da9b6,#344253);box-shadow:0 0 0 3px #6b5149;transform-origin:bottom}
-    .track-left{left:35%;transform:rotate(8deg)}.track-mid{left:50%;transform:rotate(0)}.track-right{right:35%;transform:rotate(-8deg)}
-    .portal-train{position:absolute;bottom:-8%;left:38%;width:25%;height:60%;border-radius:48% 48% 16% 16%;background:linear-gradient(90deg,#8797a6,#fff 28%,#dce7ed 65%,#788b9a);border:5px solid #6f7f8b;box-shadow:inset 0 0 20px #fff,0 20px 40px #25354d88;transform:perspective(700px) rotateX(7deg)}
-    .portal-train:before{content:"";position:absolute;top:4%;left:8%;right:8%;height:14%;background:#b9d9ef;border:5px solid #526b7e;border-radius:20px 20px 8px 8px}
-    .train-window{position:relative;display:inline-block;top:23%;left:10%;width:19%;height:12%;margin-right:3%;background:linear-gradient(135deg,#193c65,#8dc9f1);border:3px solid #d4e4eb;border-radius:5px}
-    .train-front{position:absolute;bottom:3%;left:40%;width:20%;height:7%;background:#ffd64d;border-radius:50%;box-shadow:0 0 25px #ffe58b}
-    .portal-coin{position:absolute;color:#fff2a6;background:linear-gradient(135deg,#fff36a,#f59e0b 55%,#b45309);border:3px solid #fff2a6;border-radius:50%;width:42px;height:42px;text-align:center;line-height:36px;font-size:23px;font-weight:900;box-shadow:0 0 22px #ffdb4b;animation:coinBob 2s ease-in-out infinite}
-    .coin-one{left:49%;top:33%}.coin-two{left:55%;top:45%;animation-delay:.4s}.coin-three{left:45%;top:55%;animation-delay:.8s}
-    .portal-runner{position:absolute;left:48%;bottom:12%;font-size:clamp(50px,7vw,90px);filter:drop-shadow(0 12px 8px #26334a88);animation:runnerBob .8s ease-in-out infinite alternate}
-    .portal-haze{position:absolute;inset:0;background:linear-gradient(90deg,#10142b55,transparent 48%,#10142b55);pointer-events:none}
-    .portal-shade{position:absolute;inset:0;background:linear-gradient(90deg,#11152caa 0%,#11152c55 52%,#11152c88 100%),linear-gradient(0deg,#101326aa,transparent 50%)}
-    @keyframes coinBob{50%{transform:translateY(-12px) rotateY(180deg)}}@keyframes runnerBob{to{transform:translateY(-9px)}}
-    .portal-login-card{background:linear-gradient(145deg,#171a35f2,#101326f5);border:2px solid #67d8ff;border-radius:28px;padding:clamp(18px,3vw,30px);box-shadow:0 25px 70px #02061799,inset 0 1px 0 #ffffff22;backdrop-filter:blur(16px);max-width:510px;width:100%;margin:auto}
-    .role-choice{border:1px solid #52617e;background:#222944;color:#cbd5e1;border-radius:14px;padding:12px 5px;font-weight:900;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:.2s}
-    .role-choice span{font-size:24px}.role-choice.active{background:linear-gradient(135deg,#7c3aed,#2563eb);border-color:#67e8f9;color:white;box-shadow:0 5px 0 #312e81}
-    .portal-label{display:block;color:#a5f3fc;font-size:12px;font-weight:900;margin:8px 0 5px}
-    .portal-input{width:100%;border:1px solid #475569;background:#0b1225;color:white;border-radius:12px;padding:12px 14px;font-weight:700;outline:none}
-    .portal-input:focus{border-color:#67e8f9;box-shadow:0 0 0 3px #22d3ee22}
-    .portal-submit{width:100%;border:0;border-radius:13px;padding:14px;background:linear-gradient(180deg,#ffe76a,#f59e0b);color:#30220a;font-weight:1000;box-shadow:0 5px 0 #a16207,0 10px 22px #f59e0b33;margin-top:10px}
-    .portal-submit:active,.portal-small-btn:active{transform:translateY(3px);box-shadow:none}
-    .portal-logout{background:#7f1d1d;color:#fecaca;border:1px solid #f87171;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:900}
-    .portal-subpanel{background:#0b1225;border:1px solid #475569;border-radius:16px;padding:14px}
-    .portal-small-btn{background:#0891b2;color:white;border-radius:10px;padding:0 15px;font-weight:900;white-space:nowrap}
-    .portal-list-wrap{border-top:1px solid #475569;margin-top:15px;padding-top:14px;max-height:170px;overflow:auto}
-    .portal-list-item{background:#263149;border:1px solid #475569;border-radius:10px;padding:9px 11px;color:#e2e8f0;font-size:12px;font-weight:800;display:flex;justify-content:space-between;gap:8px}
-    @media(max-width:640px){.portal-city{height:45%;bottom:22%}.portal-train{height:43%;width:32%;left:34%}.portal-runner{bottom:13%}.portal-shade{background:#11152c99}}
+    /* Kad Login Portal */
+    .portal-login-card {
+      background: linear-gradient(145deg, #171a35f5, #101326f8);
+      border: 3px solid #FFD600;
+      border-radius: 28px;
+      padding: clamp(20px, 3vw, 32px);
+      box-shadow: 0 25px 70px rgba(2, 6, 23, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+      max-width: 520px;
+      width: 100%;
+      margin: auto;
+    }
+    .role-choice {
+      border: 2px solid #52617e;
+      background: #222944;
+      color: #cbd5e1;
+      border-radius: 14px;
+      padding: 12px 5px;
+      font-weight: 900;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: 0.2s;
+    }
+    .role-choice span { font-size: 24px; }
+    .role-choice.active {
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      border-color: #67e8f9;
+      color: white;
+      box-shadow: 0 5px 0 #312e81;
+    }
+    .portal-label { display: block; color: #a5f3fc; font-size: 12px; font-weight: 900; margin: 8px 0 5px; }
+    .portal-input {
+      width: 100%;
+      border: 2px solid #475569;
+      background: #0b1225;
+      color: white;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 700;
+      outline: none;
+    }
+    .portal-input:focus { border-color: #67e8f9; box-shadow: 0 0 0 3px #22d3ee22; }
+    .portal-submit {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      padding: 14px;
+      background: linear-gradient(180deg, #ffe76a, #f59e0b);
+      color: #30220a;
+      font-weight: 900;
+      box-shadow: 0 5px 0 #a16207, 0 10px 22px #f59e0b33;
+      margin-top: 10px;
+    }
+    .portal-submit:active, .portal-small-btn:active { transform: translateY(3px); box-shadow: none; }
+    .portal-logout { background: #7f1d1d; color: #fecaca; border: 1px solid #f87171; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 900; }
+    .portal-subpanel { background: #0b1225; border: 1px solid #475569; border-radius: 16px; padding: 14px; }
+    .portal-small-btn { background: #0891b2; color: white; border-radius: 10px; padding: 0 15px; font-weight: 900; white-space: nowrap; }
+    .portal-list-wrap { border-top: 1px solid #475569; margin-top: 15px; padding-top: 14px; max-height: 170px; overflow: auto; }
+    .portal-list-item { background: #263149; border: 1px solid #475569; border-radius: 10px; padding: 9px 11px; color: #e2e8f0; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; gap: 8px; }
   </style>
 </head>
 <body class="urban-bg min-h-screen flex flex-col">
 
-  <!-- ==================== GLOBAL TOP HUD BAR (Hidden on Landing Page) ==================== -->
+  <!-- ==================== GLOBAL TOP HUD BAR (Hanya muncul selepas Log Masuk) ==================== -->
   <header id="top-hud" class="hidden sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b-4 border-purple-600 shadow-xl">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
       <!-- Left: Brand + Avatar + Student Info -->
@@ -203,19 +241,16 @@
 
       <!-- Center: Coins, XP & Overall Progress -->
       <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
-        <!-- Gold Coins Pill -->
         <div class="flex items-center gap-1.5 bg-slate-900 border-2 border-amber-400/70 px-3 py-1 rounded-full shadow-inner">
           <span class="inline-block w-5 h-5 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 border border-yellow-100 text-amber-950 font-black text-xs flex items-center justify-center animate-coin">★</span>
           <span id="hud-coins" class="font-display font-bold text-yellow-300 text-sm sm:text-base">0</span>
         </div>
 
-        <!-- XP Pill -->
         <div class="flex items-center gap-1.5 bg-slate-900 border-2 border-cyan-400/70 px-3 py-1 rounded-full shadow-inner">
           <span class="text-xs font-black text-cyan-300">XP</span>
           <span id="hud-xp" class="font-display font-bold text-white text-sm sm:text-base">0</span>
         </div>
 
-        <!-- Overall Progress Pill (Hidden on very small screens) -->
         <div class="hidden md:flex items-center gap-2 bg-slate-900 border-2 border-purple-500/70 px-3 py-1 rounded-full">
           <span class="text-xs font-bold text-purple-200">Kemajuan:</span>
           <div class="w-24 h-2.5 bg-slate-800 rounded-full overflow-hidden">
@@ -246,88 +281,172 @@
   <!-- ==================== MAIN CONTENT AREA ==================== -->
   <main class="flex-1 flex flex-col">
 
-    <!-- ==================== VIEW 0: LANDING PAGE & LOGIN PORTAL ==================== -->
-    <section id="view-landing" class="flex-1 relative overflow-hidden min-h-screen">
-      <div class="portal-scene">
-        <div class="portal-sky"></div>
-        <div class="portal-city city-left"><i></i><i></i><i></i></div>
-        <div class="portal-city city-right"><i></i><i></i><i></i></div>
-        <div class="portal-street"></div>
-        <div class="portal-track track-left"></div><div class="portal-track track-mid"></div><div class="portal-track track-right"></div>
-        <div class="portal-train"><div class="train-window"></div><div class="train-window"></div><div class="train-window"></div><div class="train-front"></div></div>
-        <div class="portal-coin coin-one">★</div><div class="portal-coin coin-two">★</div><div class="portal-coin coin-three">★</div>
-        <div class="portal-runner">🏃🏻</div>
-        <div class="portal-haze"></div>
+    <!-- ==================== VIEW 0A: MUKA HADAPAN (DENGAN TOMBOL MULA & LATAR BELAKANG BARU) ==================== -->
+    <section id="view-landing" class="front-hero-bg flex-1 relative overflow-hidden min-h-screen flex flex-col justify-between">
+      <!-- Top Bar Muka Hadapan -->
+      <div class="relative z-10 max-w-7xl mx-auto w-full px-4 pt-6 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 bg-slate-950/60 backdrop-blur-md px-4 py-2 rounded-2xl border border-yellow-300/50 shadow-lg">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-300 to-orange-500 flex items-center justify-center text-2xl shadow">🚇</div>
+          <div>
+            <div class="font-display text-white font-bold text-sm sm:text-base leading-tight">MISI EDITOR CILIK</div>
+            <div class="text-yellow-300 text-[10px] sm:text-xs font-extrabold tracking-wider">DLO BAHASA MELAYU • SK 3.3</div>
+          </div>
+        </div>
+
+        <button onclick="toggleAudio()" class="btn-arcade bg-slate-950/65 hover:bg-slate-900 text-yellow-300 border-2 border-yellow-300/60 px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold backdrop-blur-md shadow-lg">
+          🔊 Muzik
+        </button>
       </div>
-      <div class="portal-shade"></div>
-      <div class="relative z-10 max-w-7xl mx-auto px-4 py-8 min-h-screen flex flex-col">
-        <div class="flex items-center justify-between gap-3 mb-8">
-          <div class="flex items-center gap-3"><div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-300 to-orange-500 flex items-center justify-center text-3xl shadow-xl">🚇</div><div><div class="font-display text-white font-bold text-lg sm:text-xl">MISI EDITOR CILIK</div><div class="text-cyan-200 text-xs font-extrabold tracking-widest">THE ULTIMATE BAHASA MELAYU RUN</div></div></div>
-          <div class="text-xs sm:text-sm font-extrabold text-white/80 border border-white/30 rounded-full px-4 py-2 backdrop-blur">DLO BAHASA MELAYU • SK 3.3</div>
+
+      <!-- Kandungan Tengah Muka Hadapan -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 py-8 text-center flex flex-col items-center justify-center my-auto">
+        <div class="inline-flex items-center gap-2 rounded-full bg-slate-950/70 border-2 border-yellow-300 text-yellow-200 px-5 py-1.5 text-xs sm:text-sm font-black tracking-wider mb-5 shadow-lg backdrop-blur-sm">
+          <span>✦</span> THE ULTIMATE BAHASA MELAYU RUN <span>✦</span>
         </div>
-        <div class="grid lg:grid-cols-2 gap-8 items-center flex-1">
-          <div class="text-center lg:text-left">
-            <div class="inline-flex rounded-full bg-cyan-400/15 border border-cyan-300/50 text-cyan-200 px-4 py-2 text-xs font-black tracking-wider mb-5">✦ PENGEMBARAAN 3D BERMULA DI SINI ✦</div>
-            <h1 class="font-display text-5xl sm:text-7xl xl:text-8xl font-bold leading-none text-yellow-300" style="text-shadow:0 5px 0 #9a3412,0 12px 28px #020617">MISI EDITOR<br/>CILIK</h1>
-            <p class="font-display text-xl sm:text-3xl text-cyan-200 mt-4" style="text-shadow:0 4px 12px #020617">LARI, KUTIP ILMU, JADI JUARA!</p>
-            <p class="text-white/90 text-base sm:text-lg font-bold max-w-xl mx-auto lg:mx-0 mt-5">Masuki dunia permainan 3D, selesaikan misi Bahasa Melayu dan kumpulkan syiling ilmu untuk menjadi Juara Editor Cilik.</p>
-            <div class="flex justify-center lg:justify-start gap-3 mt-6 text-sm font-black text-white">
-              <span class="bg-purple-600/80 border border-purple-300/60 px-4 py-2 rounded-xl">🪙 SYILING</span><span class="bg-cyan-600/80 border border-cyan-300/60 px-4 py-2 rounded-xl">⚡ XP</span><span class="bg-orange-600/80 border border-orange-300/60 px-4 py-2 rounded-xl">🏆 LENCANA</span>
+
+        <h1 class="font-display text-5xl sm:text-7xl md:text-8xl font-bold leading-none text-white drop-shadow-2xl"
+            style="text-shadow: 0 5px 0 #7C2D12, 0 10px 0 #1E1B4B, 0 16px 32px rgba(0,0,0,0.75);">
+          MISI EDITOR<br/>
+          <span class="text-yellow-300">CILIK</span>
+        </h1>
+
+        <p class="font-display text-xl sm:text-3xl text-white mt-4 px-5 py-1.5 rounded-2xl bg-slate-950/55 backdrop-blur-sm border border-white/25 shadow-lg">
+          LARI, KUTIP ILMU, JADI JUARA!
+        </p>
+
+        <!-- TOMBOL MULA UTAMA -->
+        <div class="mt-8 sm:mt-10">
+          <button onclick="goToLoginScreen()" class="btn-arcade btn-mula-hero font-display font-bold text-2xl sm:text-4xl px-12 sm:px-16 py-5 sm:py-6 rounded-3xl inline-flex items-center gap-4 tracking-wide animate-float">
+            <span>▶</span>
+            <span>MULA</span>
+          </button>
+        </div>
+
+        <!-- Lencana Ringkas -->
+        <div class="flex flex-wrap justify-center gap-3 mt-8 text-xs sm:text-sm font-black text-white">
+          <span class="bg-slate-950/65 border border-yellow-300/60 px-4 py-2 rounded-xl backdrop-blur-sm">🪙 KUMPUL SYILING</span>
+          <span class="bg-slate-950/65 border border-cyan-300/60 px-4 py-2 rounded-xl backdrop-blur-sm">⚡ TINGKATKAN XP</span>
+          <span class="bg-slate-950/65 border border-orange-300/60 px-4 py-2 rounded-xl backdrop-blur-sm">🏆 SIJIL DIGITAL</span>
+        </div>
+      </div>
+
+      <!-- Footer Muka Hadapan -->
+      <div class="relative z-10 text-center text-white/90 text-xs font-extrabold pb-5 drop-shadow">
+        © MISI EDITOR CILIK · PENULISAN &amp; PENYUNTINGAN BAHASA MELAYU (SP 3.3.1 &amp; 3.3.2)
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 0B: DASHBOARD LOG MASUK (DIASINGKAN DARIPADA MUKA HADAPAN) ==================== -->
+    <section id="view-login" class="hidden login-screen-bg flex-1 min-h-screen flex flex-col justify-between px-4 py-6">
+      <!-- Bar Atas Halaman Log Masuk -->
+      <div class="max-w-5xl mx-auto w-full flex items-center justify-between gap-3">
+        <button onclick="navigateTo('landing')" class="btn-arcade bg-slate-900/90 hover:bg-slate-800 text-yellow-300 border-2 border-yellow-400/60 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 shadow-lg">
+          <span>⬅</span>
+          <span>Kembali ke Muka Hadapan</span>
+        </button>
+        <div class="text-xs sm:text-sm font-extrabold text-cyan-200 bg-slate-950/80 border border-cyan-400/40 px-4 py-2 rounded-full">
+          PORTAL LOG MASUK PENGGUNA
+        </div>
+      </div>
+
+      <!-- Kad Log Masuk Tengah -->
+      <div class="my-auto py-6">
+        <div class="portal-login-card">
+          <div id="portal-login">
+            <div class="text-center mb-5">
+              <div class="text-5xl mb-2">🎮</div>
+              <h2 class="font-display text-3xl font-bold text-white">LOG MASUK</h2>
+              <p class="text-slate-300 text-sm font-semibold">Pilih peranan anda untuk masuk ke permainan</p>
             </div>
+            <div class="grid grid-cols-3 gap-2 mb-5">
+              <button type="button" class="role-choice active" data-role="admin" onclick="selectPortalRole('admin')"><span>🛡️</span>Admin</button>
+              <button type="button" class="role-choice" data-role="teacher" onclick="selectPortalRole('teacher')"><span>👩‍🏫</span>Guru</button>
+              <button type="button" class="role-choice" data-role="student" onclick="selectPortalRole('student')"><span>🎒</span>Murid</button>
+            </div>
+            <form id="portal-login-form" class="space-y-3" onsubmit="portalLogin(event)">
+              <input type="hidden" id="portal-role" value="admin"/>
+              <label class="portal-label" id="portal-user-label">ID Admin</label>
+              <input id="portal-username" class="portal-input" autocomplete="username" required placeholder="Masukkan ID pengguna"/>
+              <label class="portal-label">Kata Laluan / PIN</label>
+              <input id="portal-password" class="portal-input" type="password" autocomplete="current-password" required placeholder="Masukkan kata laluan atau PIN"/>
+              <button class="portal-submit" type="submit">LOG MASUK SEKARANG <span>➜</span></button>
+            </form>
+            <p id="portal-login-message" class="text-rose-300 text-sm font-bold mt-3 text-center" aria-live="polite"></p>
+            <p class="text-slate-400 text-xs text-center mt-3">Demo awal: Admin ID <b>admin</b> · Kata laluan <b>admin123</b></p>
           </div>
-          <div class="portal-login-card">
-            <div id="portal-login">
-              <div class="text-center mb-5"><div class="text-5xl mb-2">🎮</div><h2 class="font-display text-3xl font-bold text-white">LOG MASUK</h2><p class="text-slate-300 text-sm font-semibold">Pilih peranan anda untuk meneruskan</p></div>
-              <div class="grid grid-cols-3 gap-2 mb-5">
-                <button type="button" class="role-choice active" data-role="admin" onclick="selectPortalRole('admin')"><span>🛡️</span>Admin</button>
-                <button type="button" class="role-choice" data-role="teacher" onclick="selectPortalRole('teacher')"><span>👩‍🏫</span>Guru</button>
-                <button type="button" class="role-choice" data-role="student" onclick="selectPortalRole('student')"><span>🎒</span>Murid</button>
+
+          <!-- Panel Pentadbir (Admin) -->
+          <div id="portal-admin-panel" class="hidden">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <div class="text-cyan-300 text-xs font-black">PANEL PENTADBIR</div>
+                <h2 class="font-display text-2xl text-white font-bold">🛡️ Dashboard Admin</h2>
               </div>
-              <form id="portal-login-form" class="space-y-3" onsubmit="portalLogin(event)">
-                <input type="hidden" id="portal-role" value="admin"/>
-                <label class="portal-label" id="portal-user-label">ID Admin</label><input id="portal-username" class="portal-input" autocomplete="username" required placeholder="Masukkan ID pengguna"/>
-                <label class="portal-label">Kata Laluan / PIN</label><input id="portal-password" class="portal-input" type="password" autocomplete="current-password" required placeholder="Masukkan kata laluan atau PIN"/>
-                <button class="portal-submit" type="submit">LOG MASUK SEKARANG <span>➜</span></button>
-              </form>
-              <p id="portal-login-message" class="text-rose-300 text-sm font-bold mt-3 text-center" aria-live="polite"></p>
-              <p class="text-slate-400 text-xs text-center mt-3">Demo awal: Admin ID <b>admin</b> · Kata laluan <b>admin123</b></p>
+              <button type="button" onclick="portalLogout()" class="portal-logout">Keluar</button>
             </div>
-            <div id="portal-admin-panel" class="hidden">
-              <div class="flex items-center justify-between mb-4"><div><div class="text-cyan-300 text-xs font-black">PANEL PENTADBIR</div><h2 class="font-display text-2xl text-white font-bold">🛡️ Dashboard Admin</h2></div><button type="button" onclick="portalLogout()" class="portal-logout">Keluar</button></div>
-              <p class="text-slate-300 text-sm mb-4">Daftarkan akaun guru baharu untuk mengurus kelas dan murid.</p>
-              <form onsubmit="createTeacher(event)" class="space-y-3">
-                <input id="new-teacher-name" class="portal-input" required placeholder="Nama penuh guru"/>
-                <input id="new-teacher-id" class="portal-input" required placeholder="ID log masuk guru"/>
-                <input id="new-teacher-pass" class="portal-input" type="password" minlength="4" required placeholder="Kata laluan (min. 4 aksara)"/>
-                <button class="portal-submit" type="submit">＋ DAFTARKAN GURU</button>
-              </form>
-              <div class="portal-list-wrap"><h3 class="text-yellow-300 font-black text-sm mb-2">Senarai Guru Berdaftar</h3><div id="teacher-list" class="space-y-2"></div></div>
+            <p class="text-slate-300 text-sm mb-4">Daftarkan akaun guru baharu untuk mengurus kelas dan murid.</p>
+            <form onsubmit="createTeacher(event)" class="space-y-3">
+              <input id="new-teacher-name" class="portal-input" required placeholder="Nama penuh guru"/>
+              <input id="new-teacher-id" class="portal-input" required placeholder="ID log masuk guru"/>
+              <input id="new-teacher-pass" class="portal-input" type="password" minlength="4" required placeholder="Kata laluan (min. 4 aksara)"/>
+              <button class="portal-submit" type="submit">＋ DAFTARKAN GURU</button>
+            </form>
+            <div class="portal-list-wrap">
+              <h3 class="text-yellow-300 font-black text-sm mb-2">Senarai Guru Berdaftar</h3>
+              <div id="teacher-list" class="space-y-2"></div>
             </div>
-            <div id="portal-teacher-panel" class="hidden">
-              <div class="flex items-center justify-between mb-4"><div><div class="text-cyan-300 text-xs font-black">PANEL PENGURUSAN</div><h2 class="font-display text-2xl text-white font-bold">👩‍🏫 Dashboard Guru</h2><p id="teacher-welcome" class="text-slate-300 text-xs"></p></div><button type="button" onclick="portalLogout()" class="portal-logout">Keluar</button></div>
-              <div class="portal-subpanel mb-4"><h3 class="text-yellow-300 font-black mb-3">🏫 Daftar Kelas</h3><form onsubmit="createClass(event)" class="flex gap-2"><input id="new-class-name" class="portal-input min-w-0" required placeholder="Contoh: 5 Bestari"/><button class="portal-small-btn" type="submit">Tambah</button></form><div id="class-list" class="flex flex-wrap gap-2 mt-3"></div></div>
-              <div class="portal-subpanel"><h3 class="text-cyan-300 font-black mb-3">🎒 Daftar Murid</h3><form onsubmit="createStudent(event)" class="space-y-2"><input id="new-student-name" class="portal-input" required placeholder="Nama murid"/><input id="new-student-id" class="portal-input" required placeholder="ID murid (unik)"/><input id="new-student-pin" class="portal-input" required minlength="4" placeholder="PIN murid (min. 4 aksara)"/><select id="new-student-class" class="portal-input" required><option value="">Pilih kelas</option></select><button class="portal-submit" type="submit">＋ DAFTARKAN MURID</button></form></div>
-              <div class="portal-list-wrap"><h3 class="text-yellow-300 font-black text-sm mb-2">Murid di bawah jagaan</h3><div id="student-list" class="space-y-2"></div></div>
+          </div>
+
+          <!-- Panel Guru -->
+          <div id="portal-teacher-panel" class="hidden">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <div class="text-cyan-300 text-xs font-black">PANEL PENGURUSAN</div>
+                <h2 class="font-display text-2xl text-white font-bold">👩‍🏫 Dashboard Guru</h2>
+                <p id="teacher-welcome" class="text-slate-300 text-xs"></p>
+              </div>
+              <button type="button" onclick="portalLogout()" class="portal-logout">Keluar</button>
+            </div>
+            <div class="portal-subpanel mb-4">
+              <h3 class="text-yellow-300 font-black mb-3">🏫 Daftar Kelas</h3>
+              <form onsubmit="createClass(event)" class="flex gap-2">
+                <input id="new-class-name" class="portal-input min-w-0" required placeholder="Contoh: 5 Bestari"/>
+                <button class="portal-small-btn" type="submit">Tambah</button>
+              </form>
+              <div id="class-list" class="flex flex-wrap gap-2 mt-3"></div>
+            </div>
+            <div class="portal-subpanel">
+              <h3 class="text-cyan-300 font-black mb-3">🎒 Daftar Murid</h3>
+              <form onsubmit="createStudent(event)" class="space-y-2">
+                <input id="new-student-name" class="portal-input" required placeholder="Nama murid"/>
+                <input id="new-student-id" class="portal-input" required placeholder="ID murid (unik)"/>
+                <input id="new-student-pin" class="portal-input" required minlength="4" placeholder="PIN murid (min. 4 aksara)"/>
+                <select id="new-student-class" class="portal-input" required><option value="">Pilih kelas</option></select>
+                <button class="portal-submit" type="submit">＋ DAFTARKAN MURID</button>
+              </form>
+            </div>
+            <div class="portal-list-wrap">
+              <h3 class="text-yellow-300 font-black text-sm mb-2">Murid di bawah jagaan</h3>
+              <div id="student-list" class="space-y-2"></div>
             </div>
           </div>
         </div>
-        <div class="text-center text-white/60 text-xs font-bold mt-8">© MISI EDITOR CILIK · BELAJAR SAMBIL BERMAIN</div>
+      </div>
+
+      <div class="text-center text-white/60 text-xs font-bold">
+        MISI EDITOR CILIK • PORTAL PENGGUNA
       </div>
     </section>
 
     <!-- ==================== VIEW 1: PLAYER DASHBOARD ==================== -->
     <section id="view-dashboard" class="hidden max-w-7xl mx-auto w-full px-4 py-6 space-y-6">
-      <!-- Welcome Hero Banner -->
       <div class="bg-gradient-to-r from-purple-900/95 via-indigo-900/95 to-slate-900/95 border-4 border-purple-500 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden">
-        <!-- Decorative Graffiti Stripes -->
         <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-cyan-400/10 blur-xl pointer-events-none"></div>
         <div class="absolute right-20 -bottom-10 w-44 h-44 rounded-full bg-orange-500/15 blur-xl pointer-events-none"></div>
 
         <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div class="flex items-center gap-4 text-center md:text-left flex-col sm:flex-row">
-            <div id="dash-avatar-large" class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-yellow-400 via-orange-500 to-purple-600 p-1 shadow-xl animate-float">
-              <!-- Large Avatar SVG -->
-            </div>
+            <div id="dash-avatar-large" class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-yellow-400 via-orange-500 to-purple-600 p-1 shadow-xl animate-float"></div>
             <div>
               <div class="inline-block bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-xs font-extrabold px-3 py-0.5 rounded-full mb-1">
                 PAPAN PEMUKA PELARI • <span id="dash-class-badge">5 BESTARI</span>
@@ -338,7 +457,6 @@
               <p class="text-purple-200 text-sm sm:text-base font-semibold mt-0.5">
                 Pilih kawasan misi di bawah untuk mengumpul syiling emas dan membuka laluan ke <span class="text-orange-300 font-extrabold">Destinasi Juara</span>!
               </p>
-              <!-- Avatar Switcher -->
               <div class="flex items-center justify-center md:justify-start gap-2 mt-2.5">
                 <span class="text-xs font-bold text-slate-300">Watak:</span>
                 <button onclick="switchPlayerAvatar('zafri')" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-cyan-600/40 hover:bg-cyan-500/60 border border-cyan-400 text-white">🧢 Zafri</button>
@@ -347,7 +465,6 @@
             </div>
           </div>
 
-          <!-- Stats Summary Cards -->
           <div class="grid grid-cols-3 gap-2.5 sm:gap-3 w-full md:w-auto">
             <div class="bg-slate-950/80 border-2 border-yellow-400/60 rounded-2xl p-3 text-center">
               <div class="text-xs font-extrabold text-yellow-200">SYILING EMAS</div>
@@ -364,7 +481,6 @@
           </div>
         </div>
 
-        <!-- Overall Progress Bar -->
         <div class="mt-5 pt-4 border-t border-purple-700/70">
           <div class="flex items-center justify-between text-xs sm:text-sm font-extrabold mb-1.5">
             <span class="text-cyan-300" id="dash-rank-title">Tahap 1: Perantis Editor</span>
@@ -376,7 +492,6 @@
         </div>
       </div>
 
-      <!-- 5 Mission Zone Cards Grid -->
       <div>
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <h3 class="font-display font-bold text-2xl text-white flex items-center gap-2">
@@ -392,15 +507,12 @@
           </div>
         </div>
 
-        <div id="mission-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          <!-- Dynamically rendered 5 Mission Cards -->
-        </div>
+        <div id="mission-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
       </div>
     </section>
 
     <!-- ==================== VIEW 2: MOD 1 - STESEN ILMU (SP 3.3.1) ==================== -->
     <section id="view-mod1" class="hidden max-w-6xl mx-auto w-full px-4 py-6 space-y-6">
-      <!-- Mode Header -->
       <div class="bg-gradient-to-r from-cyan-900 to-purple-900 border-4 border-cyan-400 rounded-3xl p-5 flex flex-wrap items-center justify-between gap-4 shadow-xl">
         <div>
           <span class="bg-cyan-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full uppercase">MOD 1 • SP 3.3.1</span>
@@ -417,7 +529,6 @@
         </div>
       </div>
 
-      <!-- PHASE 1: INTERACTIVE FLASHCARDS -->
       <div id="mod1-phase-notes" class="space-y-5">
         <div class="bg-slate-900/90 border-2 border-purple-500 rounded-3xl p-5">
           <div class="flex items-center justify-between mb-4">
@@ -425,9 +536,7 @@
             <span class="text-xs font-extrabold text-cyan-300 bg-slate-800 px-3 py-1 rounded-full">4 Topik Utama</span>
           </div>
 
-          <div id="mod1-flashcards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <!-- Injected by JS -->
-          </div>
+          <div id="mod1-flashcards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
 
           <div class="mt-6 text-center">
             <button onclick="switchMod1Phase('runner')" class="btn-arcade btn-orange font-display font-bold text-lg sm:text-xl px-8 py-4 rounded-2xl inline-flex items-center gap-2 shadow-xl">
@@ -438,9 +547,7 @@
         </div>
       </div>
 
-      <!-- PHASE 2: SUBWAY QUIZ RUNNER GAME -->
       <div id="mod1-phase-runner" class="hidden space-y-4">
-        <!-- Question Prompt Banner -->
         <div class="bg-slate-950 border-4 border-yellow-400 rounded-3xl p-4 sm:p-5 shadow-2xl">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
             <span id="runner-q-counter" class="bg-purple-700 text-white font-display font-bold text-xs sm:text-sm px-3 py-1 rounded-full">Soalan 1 / 10</span>
@@ -454,11 +561,9 @@
           </p>
         </div>
 
-        <!-- 3-Lane Interactive Subway Runner Canvas -->
         <div class="relative rounded-3xl border-4 border-cyan-400 overflow-hidden bg-slate-950 shadow-2xl">
           <canvas id="runner-game-canvas" class="w-full h-80 sm:h-96 cursor-pointer"></canvas>
 
-          <!-- Immediate Feedback Overlay Banner -->
           <div id="runner-feedback-overlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-20">
             <div class="max-w-md w-full bg-slate-900 border-4 border-cyan-400 rounded-3xl p-5 text-center space-y-3 animate-pop">
               <div id="runner-fb-icon" class="text-5xl">🎉</div>
@@ -470,7 +575,6 @@
             </div>
           </div>
 
-          <!-- End of Run Summary Overlay -->
           <div id="runner-summary-overlay" class="hidden absolute inset-0 bg-slate-950/92 backdrop-blur-md flex items-center justify-center p-4 z-30">
             <div class="max-w-lg w-full bg-gradient-to-b from-purple-900 to-slate-900 border-4 border-yellow-400 rounded-3xl p-6 text-center space-y-4 animate-pop">
               <div class="text-5xl">🏆</div>
@@ -488,7 +592,6 @@
           </div>
         </div>
 
-        <!-- Touch / Keyboard Lane Control Pad -->
         <div class="grid grid-cols-3 gap-3">
           <button onclick="setRunnerLane(0)" class="btn-arcade bg-purple-800 hover:bg-purple-700 active:bg-cyan-600 border-2 border-purple-400 py-3.5 rounded-2xl font-display font-bold text-base sm:text-lg text-white shadow-lg">
             ⬅️ Lorong Kiri (A)
@@ -516,7 +619,6 @@
         </button>
       </div>
 
-      <!-- Step Progress Pills -->
       <div class="grid grid-cols-4 gap-2 bg-slate-900/90 p-2 rounded-2xl border-2 border-purple-600 text-center text-xs sm:text-sm font-extrabold">
         <div id="m2-step-pill-1" class="py-2 px-2 rounded-xl bg-yellow-400 text-slate-950">1. Pilih Tajuk</div>
         <div id="m2-step-pill-2" class="py-2 px-2 rounded-xl bg-slate-800 text-slate-400">2. Kumpul Kata</div>
@@ -524,15 +626,11 @@
         <div id="m2-step-pill-4" class="py-2 px-2 rounded-xl bg-slate-800 text-slate-400">4. Tulis Draf</div>
       </div>
 
-      <!-- STEP 1: CHOOSE TOPIC -->
       <div id="m2-step-1" class="bg-slate-900/95 border-2 border-purple-500 rounded-3xl p-6 space-y-4">
         <h3 class="font-display font-bold text-2xl text-yellow-300">Langkah 1: Pilih Satu Tajuk Penulisan</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="m2-topics-container">
-          <!-- Injected by JS -->
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="m2-topics-container"></div>
       </div>
 
-      <!-- STEP 2: COLLECT APPROPRIATE WORDS -->
       <div id="m2-step-2" class="hidden bg-slate-900/95 border-2 border-cyan-400 rounded-3xl p-6 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
@@ -543,13 +641,10 @@
             Terkumpul: <span id="m2-word-count">0</span> / 6
           </div>
         </div>
-        <div id="m2-word-pool" class="flex flex-wrap gap-3 pt-2">
-          <!-- Word tokens injected by JS -->
-        </div>
+        <div id="m2-word-pool" class="flex flex-wrap gap-3 pt-2"></div>
         <div id="m2-word-feedback" class="text-sm font-extrabold min-h-[24px]"></div>
       </div>
 
-      <!-- STEP 3: ARRANGE SENTENCE CARDS -->
       <div id="m2-step-3" class="hidden bg-slate-900/95 border-2 border-orange-400 rounded-3xl p-6 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
@@ -560,13 +655,10 @@
             ✔ Semak Susunan
           </button>
         </div>
-        <div id="m2-sentence-list" class="space-y-3">
-          <!-- Sentence cards injected by JS -->
-        </div>
+        <div id="m2-sentence-list" class="space-y-3"></div>
         <div id="m2-order-feedback" class="text-sm font-extrabold"></div>
       </div>
 
-      <!-- STEP 4: DIGITAL DRAFT STUDIO -->
       <div id="m2-step-4" class="hidden bg-slate-900/95 border-2 border-green-400 rounded-3xl p-6 space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
@@ -623,12 +715,8 @@
         </div>
       </div>
 
-      <!-- 5 Category Filter Tabs -->
-      <div class="flex flex-wrap gap-2" id="m3-category-tabs">
-        <!-- Injected by JS -->
-      </div>
+      <div class="flex flex-wrap gap-2" id="m3-category-tabs"></div>
 
-      <!-- Detective Scanner Card -->
       <div class="bg-slate-900/95 border-4 border-purple-500 rounded-3xl p-6 shadow-2xl space-y-5 relative overflow-hidden">
         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-800 pb-3">
           <span id="m3-cat-badge" class="bg-orange-500 text-white font-extrabold text-xs px-3 py-1 rounded-full">Kategori 1: Kesalahan Ejaan</span>
@@ -637,22 +725,16 @@
 
         <div class="bg-slate-950 border-2 border-cyan-500/40 rounded-2xl p-5">
           <p class="text-xs font-extrabold text-cyan-400 uppercase tracking-wider mb-2">🔍 Klik pada perkataan/frasa yang mengandungi kesalahan:</p>
-          <div id="m3-sentence-tokens" class="flex flex-wrap gap-2 text-lg sm:text-2xl font-bold leading-relaxed">
-            <!-- Clickable word tokens injected by JS -->
-          </div>
+          <div id="m3-sentence-tokens" class="flex flex-wrap gap-2 text-lg sm:text-2xl font-bold leading-relaxed"></div>
         </div>
 
-        <!-- Step B: Choose Correction -->
         <div id="m3-correction-box" class="hidden bg-purple-950/70 border-2 border-yellow-400 rounded-2xl p-4 space-y-3 animate-pop">
           <p class="text-sm font-extrabold text-yellow-300">
             🎯 Anda mengesan perkataan "<span id="m3-selected-wrong" class="underline text-orange-300"></span>". Pilih pembetulan yang tepat:
           </p>
-          <div id="m3-correction-options" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <!-- Options injected by JS -->
-          </div>
+          <div id="m3-correction-options" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- Immediate Pedagogical Feedback -->
         <div id="m3-feedback-box" class="hidden rounded-2xl p-4 border-2 space-y-2 animate-pop">
           <div id="m3-fb-header" class="font-display font-bold text-xl"></div>
           <p id="m3-fb-explanation" class="text-sm sm:text-base font-semibold"></p>
@@ -682,14 +764,12 @@
         </button>
       </div>
 
-      <!-- Transparency Notice for Simulated Assistant -->
       <div class="bg-cyan-950/80 border border-cyan-400/60 rounded-2xl px-4 py-2.5 text-xs sm:text-sm text-cyan-200 font-semibold flex items-center gap-2">
         <span>ℹ️</span>
         <span><strong>Nota Pedagogi:</strong> Pembantu Editor Pintar menggunakan modul simulasi maklum balas tatabahasa terbina dalam. Anda perlu menilai setiap cadangan dan membuat keputusan sendiri!</span>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Left: Interactive Document Editor -->
         <div class="bg-slate-900/95 border-2 border-purple-500 rounded-3xl p-5 space-y-3 flex flex-col">
           <div class="flex items-center justify-between">
             <h3 class="font-display font-bold text-xl text-yellow-300">📄 Dokumen Draf Murid</h3>
@@ -706,7 +786,6 @@
           </div>
         </div>
 
-        <!-- Right: Simulated AI Assistant Review Panel -->
         <div class="bg-slate-900/95 border-2 border-cyan-400 rounded-3xl p-5 space-y-4">
           <div class="flex items-center justify-between">
             <h3 class="font-display font-bold text-xl text-cyan-300">🤖 Pembantu Editor Pintar</h3>
@@ -718,9 +797,7 @@
             <p class="text-sm font-bold text-slate-300">Klik butang <span class="text-yellow-300">"SEMAK PENULISAN"</span> di atas untuk mengimbas ejaan, tanda baca, imbuhan, penggunaan kata dan struktur ayat.</p>
           </div>
 
-          <div id="m4-suggestions-list" class="hidden space-y-3 max-h-[460px] overflow-y-auto pr-1">
-            <!-- Suggestion cards injected by JS -->
-          </div>
+          <div id="m4-suggestions-list" class="hidden space-y-3 max-h-[460px] overflow-y-auto pr-1"></div>
         </div>
       </div>
     </section>
@@ -735,7 +812,6 @@
         </div>
       </div>
 
-      <!-- Stage Tabs -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-900/90 p-2 rounded-2xl border-2 border-yellow-400/60 text-center text-xs sm:text-sm font-extrabold">
         <div id="m5-tab-1" class="py-2 px-2 rounded-xl bg-yellow-400 text-slate-950">Peringkat 1: Penulisan</div>
         <div id="m5-tab-2" class="py-2 px-2 rounded-xl bg-slate-800 text-slate-400">Peringkat 2: Kuiz Akhir</div>
@@ -743,7 +819,6 @@
         <div id="m5-tab-4" class="py-2 px-2 rounded-xl bg-slate-800 text-slate-400">Peringkat 4: Sijil Juara</div>
       </div>
 
-      <!-- STAGE 1: CHAMPION ESSAY WRITING & SELF-EDITING -->
       <div id="m5-stage-1" class="bg-slate-900/95 border-2 border-yellow-400 rounded-3xl p-6 space-y-4">
         <h3 class="font-display font-bold text-2xl text-yellow-300">Peringkat 1: Pilih Tajuk &amp; Hasilkan Penulisan Lengkap</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -770,7 +845,6 @@
         <textarea id="m5-essay-editor" rows="8" placeholder="Tulis karangan lengkap anda di sini (sekurang-kurangnya 15 patah perkataan). Pastikan ejaan, tanda baca, imbuhan, penggunaan kata dan struktur ayat tepat!"
           class="w-full p-4 rounded-2xl bg-slate-950 border-2 border-purple-500 focus:border-yellow-400 focus:outline-none text-white font-semibold text-base leading-relaxed"></textarea>
 
-        <!-- Self-Editing Checklist -->
         <div class="bg-slate-950/90 border border-cyan-500/40 rounded-2xl p-4">
           <div class="text-xs font-extrabold text-cyan-300 uppercase mb-2">Senarai Semak Penyuntingan Kendiri (SP 3.3.2):</div>
           <div class="flex flex-wrap gap-4 text-xs sm:text-sm font-bold text-slate-200">
@@ -792,7 +866,6 @@
         </div>
       </div>
 
-      <!-- STAGE 2: FINAL BOSS 10-QUESTION QUIZ -->
       <div id="m5-stage-2" class="hidden bg-slate-900/95 border-2 border-orange-400 rounded-3xl p-6 space-y-5">
         <div class="flex items-center justify-between">
           <h3 class="font-display font-bold text-2xl text-orange-300">Peringkat 2: Kuiz Akhir Editor Cilik (10 Soalan)</h3>
@@ -800,9 +873,7 @@
         </div>
         <div class="bg-slate-950 border-2 border-purple-500 rounded-2xl p-5 space-y-4">
           <p id="m5-quiz-question" class="font-display font-bold text-lg sm:text-xl text-white"></p>
-          <div id="m5-quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <!-- Options injected by JS -->
-          </div>
+          <div id="m5-quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
           <div id="m5-quiz-feedback" class="hidden p-3.5 rounded-xl text-sm font-bold"></div>
           <div id="m5-quiz-next-wrap" class="hidden text-right">
             <button onclick="nextBossQuizQuestion()" class="btn-arcade btn-yellow text-sm font-extrabold px-5 py-2.5 rounded-xl">Soalan Seterusnya ➔</button>
@@ -810,7 +881,6 @@
         </div>
       </div>
 
-      <!-- STAGE 3: LEARNING REFLECTION -->
       <div id="m5-stage-3" class="hidden bg-slate-900/95 border-2 border-cyan-400 rounded-3xl p-6 space-y-4">
         <h3 class="font-display font-bold text-2xl text-cyan-300">Peringkat 3: Refleksi Pembelajaran</h3>
         <p class="text-sm text-slate-300 font-semibold">Lengkapkan refleksi ringkas anda sebelum menuntut Sijil Digital Juara!</p>
@@ -831,7 +901,6 @@
         </button>
       </div>
 
-      <!-- STAGE 4: CHAMPION CERTIFICATE & GRAND FINALE -->
       <div id="m5-stage-4" class="hidden bg-gradient-to-b from-purple-950 to-slate-950 border-4 border-yellow-400 rounded-3xl p-6 text-center space-y-6 shadow-2xl">
         <div class="inline-flex items-center gap-2 bg-yellow-400 text-slate-950 font-black text-xs sm:text-sm px-4 py-1.5 rounded-full">
           <span>👑</span> LENCANA EDITOR CEMERLANG DIBUKA!
@@ -839,7 +908,6 @@
         <h3 class="font-display font-bold text-3xl sm:text-4xl text-yellow-300">TAHNIAH, JUARA EDITOR CILIK!</h3>
         <p id="m5-final-summary-text" class="text-base sm:text-lg text-white font-bold max-w-2xl mx-auto"></p>
 
-        <!-- Dynamic High-Res Digital Certificate Canvas -->
         <div class="max-w-3xl mx-auto rounded-2xl overflow-hidden border-4 border-yellow-400 shadow-2xl bg-white">
           <canvas id="certificate-canvas" width="1000" height="700" class="w-full h-auto"></canvas>
         </div>
@@ -861,42 +929,35 @@
   </main>
 
   <!-- ==================== GLOBAL MODALS & TOASTS ==================== -->
-
-  <!-- Toast Notification -->
   <div id="toast-box" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-slate-900 border-2 border-yellow-400 text-white px-4 py-3 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-2.5 animate-pop">
     <span id="toast-icon" class="text-xl">🪙</span>
     <span id="toast-msg">Mesej</span>
   </div>
 
-  <!-- Achievements / Badges Modal -->
   <div id="modal-achievements" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border-4 border-yellow-400 rounded-3xl max-w-2xl w-full p-6 space-y-5 animate-pop max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-purple-700 pb-3">
         <h3 class="font-display font-bold text-2xl text-yellow-300">🏆 Bilik Lencana &amp; Pencapaian</h3>
         <button onclick="closeAchievementsModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-rose-600 text-white font-black">✕</button>
       </div>
-      <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        <!-- Badges injected by JS -->
-      </div>
+      <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
     </div>
   </div>
 
-  <!-- Mod 2 Sample Essay Guide Modal -->
   <div id="modal-sample-guide" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border-4 border-cyan-400 rounded-3xl max-w-2xl w-full p-6 space-y-4 animate-pop max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-purple-700 pb-3">
         <h3 class="font-display font-bold text-2xl text-cyan-300">📖 Contoh Penulisan Panduan</h3>
         <button onclick="toggleSampleGuideModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-rose-600 text-white font-black">✕</button>
       </div>
-      <div id="sample-guide-content" class="space-y-3 text-sm sm:text-base text-slate-200 leading-relaxed whitespace-pre-line font-semibold bg-slate-950 p-4 rounded-2xl border border-purple-500/50">
-      </div>
+      <div id="sample-guide-content" class="space-y-3 text-sm sm:text-base text-slate-200 leading-relaxed whitespace-pre-line font-semibold bg-slate-950 p-4 rounded-2xl border border-purple-500/50"></div>
     </div>
   </div>
 
   <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
   <script>
     /* =========================================================================
-       1. WEB AUDIO API SYNTHESIZER (Original Chiptune Loop & SFX)
+       1. WEB AUDIO API SYNTHESIZER
        ========================================================================= */
     const SoundEngine = {
       ctx: null,
@@ -1003,7 +1064,7 @@
     }
 
     /* =========================================================================
-       2. ORIGINAL SVG CHARACTER GENERATOR (Zafri & Maya)
+       2. ORIGINAL SVG CHARACTER GENERATOR
        ========================================================================= */
     function getAvatarSVG(type = 'zafri') {
       if (type === 'maya') {
@@ -1062,7 +1123,7 @@
     }
 
     /* =========================================================================
-       3. GAME STATE & LOCALSTORAGE PERSISTENCE
+       3. GAME STATE & LOCALSTORAGE
        ========================================================================= */
     const STORAGE_KEY = 'misi_editor_cilik_v1';
 
@@ -1146,9 +1207,16 @@
     }
 
     /* =========================================================================
-       4. NAVIGATION & HUD RENDERING
+       4. NAVIGATION & HUD RENDERING (TERMASUK PENGASINGAN LANDING & LOGIN)
        ========================================================================= */
-    const VIEWS = ['landing', 'dashboard', 'mod1', 'mod2', 'mod3', 'mod4', 'mod5'];
+    const VIEWS = ['landing', 'login', 'dashboard', 'mod1', 'mod2', 'mod3', 'mod4', 'mod5'];
+
+    function goToLoginScreen() {
+      SoundEngine.init();
+      SoundEngine.startBGM();
+      SoundEngine.unlock();
+      navigateTo('login');
+    }
 
     function navigateTo(viewName) {
       if (viewName !== 'mod1') {
@@ -1163,14 +1231,16 @@
       if (target) target.classList.remove('hidden');
 
       const hud = document.getElementById('top-hud');
-      if (viewName === 'landing') {
+      if (viewName === 'landing' || viewName === 'login') {
         hud.classList.add('hidden');
       } else {
         hud.classList.remove('hidden');
         updateHUD();
       }
 
-      if (viewName === 'dashboard') {
+      if (viewName === 'login') {
+        selectPortalRole('admin');
+      } else if (viewName === 'dashboard') {
         renderDashboardMissions();
       } else if (viewName === 'mod1') {
         initMod1();
@@ -1216,14 +1286,7 @@
     }
 
     /* =========================================================================
-       5. LANDING PAGE INIT
-       ========================================================================= */
-    function initLandingPage() {
-      selectPortalRole('admin');
-    }
-
-    /* =========================================================================
-       6. DASHBOARD MISSION CARDS & ACHIEVEMENTS SYSTEM
+       5. DASHBOARD MISSION CARDS & ACHIEVEMENTS SYSTEM
        ========================================================================= */
     const MISSIONS_META = [
       {
@@ -1354,7 +1417,6 @@
       gameState = { ...DEFAULT_STATE };
       document.getElementById('toast-box').classList.add('hidden');
       navigateTo('landing');
-      initLandingPage();
     }
 
     /* Badges System */
@@ -1401,7 +1463,7 @@
     }
 
     /* =========================================================================
-       7. MOD 1: STESEN ILMU (Flashcards + 3-Lane Subway Quiz Runner)
+       6. MOD 1: STESEN ILMU
        ========================================================================= */
     const MOD1_NOTES = [
       {
@@ -1578,7 +1640,6 @@
       canvas.width = rect.width || 800;
       canvas.height = rect.height || 360;
 
-      // Tap left/center/right third
       canvas.onclick = (e) => {
         const b = canvas.getBoundingClientRect();
         const relX = (e.clientX - b.left) / b.width;
@@ -1587,7 +1648,6 @@
         else setRunnerLane(2);
       };
 
-      // Mobile touch swipe left/right
       let touchStartX = 0;
       canvas.ontouchstart = (e) => {
         if (e.touches && e.touches.length) {
@@ -1784,7 +1844,7 @@
     }
 
     /* =========================================================================
-       8. MOD 2: BANDAR PENULIS (BUILD YOUR STORY - SP 3.3.1)
+       7. MOD 2: BANDAR PENULIS
        ========================================================================= */
     const MOD2_TOPICS = [
       {
@@ -1988,4 +2048,479 @@
         document.getElementById('m2-draft-outro').value
       ].join(' ').trim();
       const count = combined ? combined.split(/\s+/).length : 0;
-      document.getElementById('m2-draft-word
+      document.getElementById('m2-draft-wordcount').textContent = count;
+      return count;
+    }
+
+    ['m2-draft-intro', 'm2-draft-body', 'm2-draft-outro'].forEach(id => {
+      document.addEventListener('input', (e) => {
+        if (e.target && e.target.id === id) updateMod2WordCount();
+      });
+    });
+
+    function saveMod2Draft(isSubmit) {
+      const intro = document.getElementById('m2-draft-intro').value.trim();
+      const body = document.getElementById('m2-draft-body').value.trim();
+      const outro = document.getElementById('m2-draft-outro').value.trim();
+      const wc = updateMod2WordCount();
+
+      gameState.mod2Drafts[mod2State.selectedTopic.id] = { intro, body, outro };
+      saveGameState();
+
+      const status = document.getElementById('m2-draft-status');
+      if (!isSubmit) {
+        SoundEngine.coin();
+        status.textContent = '💾 Draf penulisan berjaya disimpan dalam pelayar!';
+        return;
+      }
+
+      if (wc < 12) {
+        SoundEngine.wrong();
+        status.textContent = '⚠️ Sila tulis sekurang-kurangnya 12 patah perkataan sebelum menghantar draf.';
+        status.className = 'text-sm font-extrabold text-orange-400';
+        return;
+      }
+
+      addRewards(50, 80, 'Menghantar Draf Penulisan');
+      completeMission(2);
+      status.innerHTML = `
+        🎉 Tahniah! Draf dihantar (+50 Syiling). Misi 3 (Terowong Detektif) kini dibuka!
+        <button onclick="navigateTo('mod3')" class="ml-3 btn-arcade btn-orange text-xs px-4 py-2 rounded-xl text-white">🚀 Teruskan ke Misi 3</button>
+      `;
+      status.className = 'text-sm font-extrabold text-green-300';
+    }
+
+    /* =========================================================================
+       8. MOD 3: TEROWONG DETEKTIF
+       ========================================================================= */
+    const MOD3_QUESTIONS = [
+      {
+        cat: 'Kesalahan Ejaan',
+        tokens: ['Ibu', 'membeli', 'sayur-sayuran', 'segar', 'di', 'pasaraya', 'berhampiran', 'rumah.'],
+        wrongIdx: 5,
+        options: ['pasar raya', 'pasar-raya', 'pasarraya'],
+        correctOpt: 'pasar raya',
+        explain: 'Kata majmuk "pasar raya" hendaklah dieja terpisah sebagai dua perkataan.',
+        fixedSentence: 'Ibu membeli sayur-sayuran segar di pasar raya berhampiran rumah.'
+      },
+      {
+        cat: 'Kesalahan Ejaan',
+        tokens: ['Murid-murid', 'digalakkan', 'mengambil', 'bahagian', 'dalam', 'aktiviti', 'ko-kurikulum', 'sekolah.'],
+        wrongIdx: 6,
+        options: ['kokurikulum', 'ko kurikulum', 'kokurikulam'],
+        correctOpt: 'kokurikulum',
+        explain: 'Imbuhan pinjaman "ko-" ditulis rapat dengan kata dasar menjadi "kokurikulum".',
+        fixedSentence: 'Murid-murid digalakkan mengambil bahagian dalam aktiviti kokurikulum sekolah.'
+      },
+      {
+        cat: 'Kesalahan Ejaan',
+        tokens: ['Ayah', 'memesan', 'sepinggan', 'kueh', 'teow', 'goreng', 'di', 'restoran', 'itu.'],
+        wrongIdx: 3,
+        options: ['kuetiau', 'kueh-teow', 'kuihtiau'],
+        correctOpt: 'kuetiau',
+        explain: 'Menurut Kamus Dewan, ejaan baku yang tepat ialah "kuetiau" (dieja rapat).',
+        fixedSentence: 'Ayah memesan sepinggan kuetiau goreng di restoran itu.'
+      },
+      {
+        cat: 'Kesalahan Tanda Baca',
+        tokens: ['"Wah,', 'cantiknya', 'lukisan', 'pemandangan', 'sawah', 'padi', 'ini."', 'kata', 'Siti.'],
+        wrongIdx: 6,
+        options: ['ini!"', 'ini?"', 'ini;"'],
+        correctOpt: 'ini!"',
+        explain: 'Ayat seruan yang dimulakan dengan kata seru "Wah," mesti diakhiri dengan tanda seru (!).',
+        fixedSentence: '"Wah, cantiknya lukisan pemandangan sawah padi ini!" kata Siti.'
+      },
+      {
+        cat: 'Kesalahan Tanda Baca',
+        tokens: ['Bilakah', 'rombongan', 'sekolah', 'kita', 'akan', 'bertolak', 'ke', 'melaka?'],
+        wrongIdx: 7,
+        options: ['Melaka?', 'Melaka.', 'melaka!'],
+        correctOpt: 'Melaka?',
+        explain: 'Nama tempat iaitu "Melaka" ialah Kata Nama Khas, jadi huruf pertamanya mesti huruf besar.',
+        fixedSentence: 'Bilakah rombongan sekolah kita akan bertolak ke Melaka?'
+      },
+      {
+        cat: 'Kesalahan Tanda Baca',
+        tokens: ['Emak', 'membeli', 'ikan', 'udang,', 'sotong', 'dan', 'ketam', 'di', 'pasar.'],
+        wrongIdx: 2,
+        options: ['ikan,', 'ikan;', 'ikan.'],
+        correctOpt: 'ikan,',
+        explain: 'Tanda koma (,) digunakan untuk memisahkan unsur-unsur yang disenaraikan secara berturut-turut.',
+        fixedSentence: 'Emak membeli ikan, udang, sotong dan ketam di pasar.'
+      },
+      {
+        cat: 'Kesalahan Imbuhan',
+        tokens: ['Pihak', 'kerajaan', 'bercadang', 'untuk', 'memperbesarkan', 'jalan', 'raya', 'yang', 'sempit', 'itu.'],
+        wrongIdx: 4,
+        options: ['memperbesar', 'membesarkan', 'diperbesar'],
+        correctOpt: 'memperbesar',
+        explain: 'Kata adjektif "besar" yang menerima apitan "memper-" tidak boleh menerima akhiran "-kan". Yang tepat ialah "memperbesar".',
+        fixedSentence: 'Pihak kerajaan bercadang untuk memperbesar jalan raya yang sempit itu.'
+      },
+      {
+        cat: 'Kesalahan Imbuhan',
+        tokens: ['Buku', 'cerita', 'yang', 'dipinjam', 'oleh', 'Amir', 'telah', 'di', 'pulangkan', 'semalam.'],
+        wrongIdx: 7,
+        options: ['dipulangkan', 'di-pulangkan', 'memulangkan'],
+        correctOpt: 'dipulangkan',
+        explain: 'Imbuhan awalan "di-" pada kata kerja pasif mesti ditulis rapat dengan kata dasar ("dipulangkan").',
+        fixedSentence: 'Buku cerita yang dipinjam oleh Amir telah dipulangkan semalam.'
+      },
+      {
+        cat: 'Kesalahan Imbuhan',
+        tokens: ['Cikgu', 'Aina', 'sedang', 'mengemas', 'kinikan', 'rekod', 'kehadiran', 'murid', 'kelasnya.'],
+        wrongIdx: 4,
+        options: ['kini', 'kininya', 'mengemaskini'],
+        correctOpt: 'kini',
+        explain: 'Kata majmuk "kemas kini" yang menerima awalan "meN-" dieja terpisah tanpa akhiran "-kan" ("mengemas kini").',
+        fixedSentence: 'Cikgu Aina sedang mengemas kini rekod kehadiran murid kelasnya.'
+      },
+      {
+        cat: 'Kesalahan Penggunaan Kata',
+        tokens: ['Kerajaan', 'membina', 'jalan', 'berturap', 'di', 'kawasan', 'pendalaman', 'Sabah', 'dan', 'Sarawak.'],
+        wrongIdx: 6,
+        options: ['pedalaman', 'kedalaman', 'dalam'],
+        correctOpt: 'pedalaman',
+        explain: '"Pedalaman" bermaksud kawasan terpencil jauh dari bandar, manakala "pendalaman" bermaksud proses mendalamkan sungai.',
+        fixedSentence: 'Kerajaan membina jalan berturap di kawasan pedalaman Sabah dan Sarawak.'
+      },
+      {
+        cat: 'Kesalahan Penggunaan Kata',
+        tokens: ['Pelari', 'pecut', 'itu', 'berjaya', 'menamatkan', 'larian', 'dalam', 'tempuh', '11', 'saat.'],
+        wrongIdx: 7,
+        options: ['tempoh', 'menempuh', 'tertempuh'],
+        correctOpt: 'tempoh',
+        explain: '"Tempoh" merujuk kepada jangka masa, manakala "tempuh" bermaksud melanggar atau melalui rintangan.',
+        fixedSentence: 'Pelari pecut itu berjaya menamatkan larian dalam tempoh 11 saat.'
+      },
+      {
+        cat: 'Kesalahan Penggunaan Kata',
+        tokens: ['Abang', 'menerima', 'hadiah', 'Tokoh', 'Murid', 'Cemerlang', 'sempena', 'Hari', 'Anugerah.'],
+        wrongIdx: 2,
+        options: ['anugerah', 'derma', 'upah'],
+        correctOpt: 'anugerah',
+        explain: 'Gelaran penghormatan tinggi seperti Tokoh Murid lebih tepat menggunakan perkataan "anugerah".',
+        fixedSentence: 'Abang menerima anugerah Tokoh Murid Cemerlang sempena Hari Anugerah.'
+      },
+      {
+        cat: 'Kesalahan Struktur Ayat',
+        tokens: ['Semua', 'murid-murid', 'diminta', 'beratur', 'di', 'dewan', 'sekolah', 'sekarang.'],
+        wrongIdx: 1,
+        options: ['murid', 'para murid-murid', 'pelajar-pelajar'],
+        correctOpt: 'murid',
+        explain: 'Kata bilangan "Semua" sudah membawa maksud jamak, maka kata nama selepasnya tidak perlu digandakan ("Semua murid").',
+        fixedSentence: 'Semua murid diminta beratur di dewan sekolah sekarang.'
+      },
+      {
+        cat: 'Kesalahan Struktur Ayat',
+        tokens: ['Kami', 'sekeluarga', 'gemar', 'makan', 'goreng', 'pisang', 'panas', 'pada', 'waktu', 'petang.'],
+        wrongIdx: 4,
+        options: ['pisang goreng', 'goreng-pisang', 'pisang-goreng'],
+        correctOpt: 'pisang goreng',
+        explain: 'Mengikut Hukum D-M (Diterangkan-Menerangkan), benda yang diterangkan ialah "pisang", maka frasa yang betul ialah "pisang goreng".',
+        fixedSentence: 'Kami sekeluarga gemar makan pisang goreng panas pada waktu petang.'
+      },
+      {
+        cat: 'Kesalahan Struktur Ayat',
+        tokens: ['Sekolah', 'di', 'mana', 'saya', 'belajar', 'terletak', 'berhampiran', 'taman', 'rekreasi.'],
+        wrongIdx: 1,
+        options: ['tempat', 'di-mana', 'yang mana'],
+        correctOpt: 'tempat',
+        explain: 'Kata tanya "di mana" tidak boleh digunakan sebagai kata hubung dalam ayat penyata. Gunakan "tempat".',
+        fixedSentence: 'Sekolah tempat saya belajar terletak berhampiran taman rekreasi.'
+      }
+    ];
+
+    let mod3State = {
+      qIndex: 0,
+      score: 0,
+      answeredIds: []
+    };
+
+    function initMod3() {
+      const cats = ['Semua (15)', 'Kesalahan Ejaan', 'Kesalahan Tanda Baca', 'Kesalahan Imbuhan', 'Kesalahan Penggunaan Kata', 'Kesalahan Struktur Ayat'];
+      document.getElementById('m3-category-tabs').innerHTML = cats.map((c, idx) => `
+        <button onclick="jumpMod3Category(${idx})" class="btn-arcade bg-slate-800 hover:bg-purple-700 border border-purple-500/60 text-xs font-extrabold px-3 py-1.5 rounded-xl text-cyan-200">
+          ${c}
+        </button>
+      `).join('');
+      renderMod3Question();
+    }
+
+    function jumpMod3Category(catIdx) {
+      if (catIdx === 0) mod3State.qIndex = 0;
+      else mod3State.qIndex = (catIdx - 1) * 3;
+      SoundEngine.laneSwitch();
+      renderMod3Question();
+    }
+
+    function renderMod3Question() {
+      const q = MOD3_QUESTIONS[mod3State.qIndex];
+      document.getElementById('m3-score').textContent = mod3State.score;
+      document.getElementById('m3-cat-badge').textContent = `Kategori: ${q.cat}`;
+      document.getElementById('m3-q-progress').textContent = `Kes ${mod3State.qIndex + 1} daripada ${MOD3_QUESTIONS.length}`;
+
+      document.getElementById('m3-correction-box').classList.add('hidden');
+      document.getElementById('m3-feedback-box').classList.add('hidden');
+
+      const tokensDiv = document.getElementById('m3-sentence-tokens');
+      tokensDiv.innerHTML = q.tokens.map((tok, idx) => `
+        <button onclick="selectMod3Token(${idx})" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-500/30 border-2 border-slate-700 hover:border-cyan-400 text-white transition">
+          ${tok}
+        </button>
+      `).join('');
+    }
+
+    function selectMod3Token(idx) {
+      const q = MOD3_QUESTIONS[mod3State.qIndex];
+      const buttons = document.getElementById('m3-sentence-tokens').querySelectorAll('button');
+
+      if (idx === q.wrongIdx) {
+        SoundEngine.laneSwitch();
+        buttons.forEach((b, i) => {
+          if (i === idx) b.className = 'px-3 py-1.5 rounded-xl bg-orange-500 border-2 border-yellow-300 text-white font-black animate-pulse';
+        });
+        document.getElementById('m3-selected-wrong').textContent = q.tokens[idx];
+        const optBox = document.getElementById('m3-correction-options');
+        optBox.innerHTML = q.options.map(opt => `
+          <button onclick="submitMod3Correction('${opt.replace(/'/g, "\\'")}')" class="btn-arcade bg-slate-800 hover:bg-purple-700 border-2 border-cyan-400 py-3 px-4 rounded-xl font-bold text-white text-sm sm:text-base">
+            ${opt}
+          </button>
+        `).join('');
+        document.getElementById('m3-correction-box').classList.remove('hidden');
+      } else {
+        SoundEngine.wrong();
+        buttons[idx].className = 'px-3 py-1.5 rounded-xl bg-rose-950 border-2 border-rose-500 text-rose-300';
+        showToast('Perkataan itu sudah betul! Cuba periksa perkataan lain dalam ayat.', '🔦');
+      }
+    }
+
+    function submitMod3Correction(chosenOpt) {
+      const q = MOD3_QUESTIONS[mod3State.qIndex];
+      const fbBox = document.getElementById('m3-feedback-box');
+      const fbHeader = document.getElementById('m3-fb-header');
+      const fbExplain = document.getElementById('m3-fb-explanation');
+      const fbSentence = document.getElementById('m3-fb-correct-sentence');
+
+      document.getElementById('m3-correction-box').classList.add('hidden');
+      fbBox.classList.remove('hidden');
+
+      if (chosenOpt === q.correctOpt) {
+        if (!mod3State.answeredIds.includes(mod3State.qIndex)) {
+          mod3State.answeredIds.push(mod3State.qIndex);
+          mod3State.score++;
+          addRewards(10, 15);
+        }
+        fbBox.className = 'rounded-2xl p-4 border-2 border-green-400 bg-green-950/60 space-y-2 animate-pop';
+        fbHeader.textContent = '🎉 Syabas Detektif! Pembetulan Tepat (+10 Syiling)';
+        fbHeader.className = 'font-display font-bold text-xl text-green-300';
+      } else {
+        SoundEngine.wrong();
+        fbBox.className = 'rounded-2xl p-4 border-2 border-orange-400 bg-orange-950/60 space-y-2 animate-pop';
+        fbHeader.textContent = `⚠️ Hampir Tepat! Jawapan Sebenar: "${q.correctOpt}"`;
+        fbHeader.className = 'font-display font-bold text-xl text-orange-300';
+      }
+
+      fbExplain.textContent = q.explain;
+      fbSentence.textContent = q.fixedSentence;
+      document.getElementById('m3-score').textContent = mod3State.score;
+    }
+
+    function nextDetectiveQuestion() {
+      mod3State.qIndex++;
+      if (mod3State.qIndex >= MOD3_QUESTIONS.length) {
+        completeMission(3);
+        showToast('Tahniah! Semua kes selesai. Misi 4 (Makmal Editor) dibuka!', '🏆');
+        navigateTo('mod4');
+      } else {
+        renderMod3Question();
+      }
+    }
+
+    /* =========================================================================
+       9. MOD 4: MAKMAL EDITOR
+       ========================================================================= */
+    const MOD4_RAW_TEXT = `Pada hari sabtu yang lalu, Persatuan Bahasa Melayu sekolah saya telah mengadakan lawatan sambil belajar ke Muzium Negara di kuala lumpur. Rombongan kami terdiri daripada 35 orang murid-murid dan empat orang guru pengiring.
+
+Setibanya di sana, kami disambut mesra oleh pegawai muzium. Beliau memperjelaskan sejarah kemerdekaan negara kepada kami dengan penuh semangat. Kami juga berpeluang melihat pelbagai artifak lama yang di pamerkan di galeri utama.
+
+Selain itu, kami mencatat maklumat penting dalam buku nota sebagai rujukan. Lawatan ini amat berfaedah kerana dapat menambah ilmu pengetahuan kami tentang sejarah tanah air?`;
+
+    const MOD4_SUGGESTIONS = [
+      {
+        id: 's1',
+        category: 'Tanda Baca (Huruf Besar)',
+        original: 'hari sabtu',
+        suggested: 'hari Sabtu',
+        reason: 'Nama hari ("Sabtu") ialah Kata Nama Khas, jadi huruf pertamanya mesti ditulis dengan huruf besar.',
+        quizQ: 'Mengapakah perkataan "Sabtu" perlu menggunakan huruf besar?',
+        quizOpts: ['Kerana ia Kata Nama Khas', 'Kerana ia kata kerja'],
+        quizAns: 0
+      },
+      {
+        id: 's2',
+        category: 'Tanda Baca (Nama Tempat)',
+        original: 'di kuala lumpur',
+        suggested: 'di Kuala Lumpur',
+        reason: 'Nama ibu negara "Kuala Lumpur" ialah Kata Nama Khas dan perlu dimulakan dengan huruf besar.',
+        quizQ: 'Apakah jenis kata bagi "Kuala Lumpur"?',
+        quizOpts: ['Kata Adjektif', 'Kata Nama Khas'],
+        quizAns: 1
+      },
+      {
+        id: 's3',
+        category: 'Struktur Ayat (Kata Bilangan)',
+        original: '35 orang murid-murid',
+        suggested: '35 orang murid',
+        reason: 'Kata bilangan tentu "35 orang" sudah menunjukkan jumlah yang banyak (jamak), maka perkataan "murid" tidak perlu digandakan.',
+        quizQ: 'Bolehkah kata nama digandakan selepas kata bilangan "35 orang"?',
+        quizOpts: ['Tidak boleh (Lewah)', 'Boleh sentiasa'],
+        quizAns: 0
+      },
+      {
+        id: 's4',
+        category: 'Imbuhan',
+        original: 'memperjelaskan',
+        suggested: 'menjelaskan',
+        reason: 'Kata dasar "jelas" ialah kata adjektif; bentuk imbuhan yang gramatis ialah "menjelaskan" atau "memperjelas" (tanpa apitan rangkap memper-...-kan).',
+        quizQ: 'Manakah bentuk kata kerja yang gramatis?',
+        quizOpts: ['menjelaskan / memperjelas', 'memperjelaskan'],
+        quizAns: 0
+      },
+      {
+        id: 's5',
+        category: 'Ejaan Imbuhan di-',
+        original: 'di pamerkan',
+        suggested: 'dipamerkan',
+        reason: 'Imbuhan awalan "di-" bagi kata kerja pasif mesti ditulis rapat dengan kata dasar ("dipamerkan").',
+        quizQ: 'Bagaimanakah ejaan imbuhan awalan "di-" pada kata kerja?',
+        quizOpts: ['Dieja rapat (dipamerkan)', 'Dieja jarak (di pamerkan)'],
+        quizAns: 0
+      },
+      {
+        id: 's6',
+        category: 'Tanda Baca (Akhir Ayat)',
+        original: 'sejarah tanah air?',
+        suggested: 'sejarah tanah air.',
+        reason: 'Ayat tersebut ialah ayat penyata yang menyatakan fakta, bukan ayat tanya. Gunakan tanda noktah (.) di akhir ayat.',
+        quizQ: 'Apakah tanda baca yang betul di akhir ayat penyata?',
+        quizOpts: ['Tanda noktah (.)', 'Tanda soal (?)'],
+        quizAns: 0
+      }
+    ];
+
+    let mod4State = {
+      reviewedIds: [],
+      decisions: {}
+    };
+
+    function initMod4() {
+      const area = document.getElementById('m4-editor-textarea');
+      if (!area.value.trim()) {
+        area.value = MOD4_RAW_TEXT;
+      }
+      updateMod4Counter();
+    }
+
+    function resetMod4Document() {
+      document.getElementById('m4-editor-textarea').value = MOD4_RAW_TEXT;
+      mod4State = { reviewedIds: [], decisions: {} };
+      document.getElementById('m4-ai-placeholder').classList.remove('hidden');
+      document.getElementById('m4-suggestions-list').classList.add('hidden');
+      updateMod4Counter();
+    }
+
+    function updateMod4Counter() {
+      document.getElementById('m4-review-counter').textContent = `${mod4State.reviewedIds.length} / ${MOD4_SUGGESTIONS.length} Disemak`;
+    }
+
+    function runSimulatedAIAssistant() {
+      SoundEngine.laneSwitch();
+      document.getElementById('m4-ai-placeholder').classList.add('hidden');
+      const list = document.getElementById('m4-suggestions-list');
+      list.classList.remove('hidden');
+
+      list.innerHTML = MOD4_SUGGESTIONS.map(s => {
+        const decision = mod4State.decisions[s.id];
+        return `
+        <div id="card-${s.id}" class="bg-slate-950 border-2 ${decision === 'accepted' ? 'border-green-400' : decision === 'rejected' ? 'border-amber-400' : 'border-purple-500'} rounded-2xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">${s.category}</span>
+            ${decision ? `<span class="text-xs font-extrabold ${decision === 'accepted' ? 'text-green-400' : 'text-amber-300'}">${decision === 'accepted' ? '✔ Diterima' : '✖ Ditolak'}</span>` : ''}
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+            <div class="bg-rose-950/60 border border-rose-500/40 p-2 rounded-xl">
+              <span class="text-rose-300 font-extrabold block text-[11px]">AYAT ASAL:</span>
+              <span class="line-through text-slate-200 font-bold">${s.original}</span>
+            </div>
+            <div class="bg-green-950/60 border border-green-500/40 p-2 rounded-xl">
+              <span class="text-green-300 font-extrabold block text-[11px]">CADANGAN PEMBETULAN:</span>
+              <span class="text-white font-extrabold">${s.suggested}</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 font-semibold leading-relaxed">💡 <strong>Sebab:</strong> ${s.reason}</p>
+
+          <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="text-[11px] font-extrabold text-yellow-300">Semakan Kefahaman: ${s.quizQ}</div>
+            <div class="flex flex-wrap gap-2">
+              ${s.quizOpts.map((opt, idx) => `
+                <button onclick="handleMod4Decision('${s.id}', 'accepted', ${idx === s.quizAns})" class="btn-arcade bg-green-700 hover:bg-green-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg">
+                  ✔ Terima (${opt})
+                </button>
+              `).join('')}
+              <button onclick="handleMod4Decision('${s.id}', 'rejected', true)" class="btn-arcade bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-600">
+                ✖ Tolak Cadangan
+              </button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function handleMod4Decision(sugId, action, understood) {
+      const s = MOD4_SUGGESTIONS.find(item => item.id === sugId);
+      if (!s) return;
+
+      if (action === 'accepted' && !understood) {
+        SoundEngine.wrong();
+        showToast('Sila pilih sebab tatabahasa yang betul untuk menerima pembetulan ini!', '💡');
+        return;
+      }
+
+      const area = document.getElementById('m4-editor-textarea');
+      if (action === 'accepted') {
+        if (area.value.includes(s.original)) {
+          area.value = area.value.replace(s.original, s.suggested);
+        }
+        SoundEngine.coin();
+      } else {
+        SoundEngine.laneSwitch();
+      }
+
+      mod4State.decisions[sugId] = action;
+      if (!mod4State.reviewedIds.includes(sugId)) {
+        mod4State.reviewedIds.push(sugId);
+        addRewards(10, 15);
+      }
+      updateMod4Counter();
+      runSimulatedAIAssistant();
+    }
+
+    function submitMod4Workshop() {
+      if (mod4State.reviewedIds.length < 4) {
+        SoundEngine.wrong();
+        showToast('Sila semak sekurang-kurangnya 4 cadangan Pembantu Editor dahulu!', '🤖');
+        return;
+      }
+      addRewards(40, 60, 'Bengkel Editor Selesai');
+      completeMission(4);
+      navigateTo('mod5');
+    }
+
+    /* =========================================================================
+       10. MOD 5: DESTINASI JUARA
+       ========================================================================= */
+    const MOD5_BOSS_QUIZ = [
+      { q: 'Apakah format wajib di bahagian kanan atas Surat Kiriman Tidak Rasmi?', opts: ['Alamat pengirim dan tarikh', 'Nama Guru Besar', 'Masa mengikut urutan', 'Tandatangan saksi'], ans: 0 },
+      { q: 'Manakah ejaan kata majmuk yang BETUL?', opts: ['antarabangsa', 'antara bangsa', 'antarabangsah', 'antara-bangsa'], ans: 0 },
+      { q: 'Pilih ayat yang menggunakan tanda baca yang BETUL.', opts: ['"Amboi, segaknya kamu hari ini!" puji ibu.', '"Amboi, segaknya kamu hari ini." puji ibu.', '"Amboi segaknya kamu
