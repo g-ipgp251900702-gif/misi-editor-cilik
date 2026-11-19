@@ -11,13 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    /* Tambahan kemasan butang & paparan mudah alih */
-button {
-  cursor: pointer;
-}
-button:disabled {
-  cursor: not-allowed;
-}
     :root {
       --purple-deep: #2E1065;
       --purple-main: #6C2BD9;
@@ -37,6 +30,13 @@ button:disabled {
 
     h1, h2, h3, .font-display {
       font-family: 'Fredoka', sans-serif;
+    }
+
+    button {
+      cursor: pointer;
+    }
+    button:disabled {
+      cursor: not-allowed;
     }
 
     /* Graffiti & Street Art Text Effects */
@@ -141,7 +141,7 @@ button:disabled {
       touch-action: manipulation;
     }
 
-    /* 3D front-page scene inspired by the supplied endless-runner reference */
+    /* 3D front-page scene */
     .portal-scene{position:absolute;inset:0;overflow:hidden;perspective:900px;background:linear-gradient(#6bbcf0 0%,#b8dff5 42%,#d18a69 100%)}
     .portal-sky{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 34%,#e0f5ff88,transparent 48%),linear-gradient(180deg,#60b8f4 0%,#b9d9ed 50%,#f5b58a 100%)}
     .portal-city{position:absolute;bottom:25%;height:62%;width:42%;display:flex;align-items:stretch;gap:8px;transform-style:preserve-3d}
@@ -176,7 +176,6 @@ button:disabled {
     .portal-list-wrap{border-top:1px solid #475569;margin-top:15px;padding-top:14px;max-height:170px;overflow:auto}
     .portal-list-item{background:#263149;border:1px solid #475569;border-radius:10px;padding:9px 11px;color:#e2e8f0;font-size:12px;font-weight:800;display:flex;justify-content:space-between;gap:8px}
     @media(max-width:640px){.portal-city{height:45%;bottom:22%}.portal-train{height:43%;width:32%;left:34%}.portal-runner{bottom:13%}.portal-shade{background:#11152c99}}
-
   </style>
 </head>
 <body class="urban-bg min-h-screen flex flex-col">
@@ -237,6 +236,9 @@ button:disabled {
         <button id="btn-audio-toggle" onclick="toggleAudio()" class="btn-arcade bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/40 p-2 rounded-xl text-sm font-bold" title="Kawal Muzik & Bunyi">
           🔊
         </button>
+        <button onclick="portalLogout()" class="btn-arcade bg-rose-900/90 hover:bg-rose-800 text-rose-200 border border-rose-500/50 px-2.5 py-2 rounded-xl text-xs font-extrabold" title="Log Keluar">
+          Keluar
+        </button>
       </div>
     </div>
   </header>
@@ -244,7 +246,7 @@ button:disabled {
   <!-- ==================== MAIN CONTENT AREA ==================== -->
   <main class="flex-1 flex flex-col">
 
-    <!-- ==================== VIEW 0: LANDING PAGE & REGISTRATION ==================== -->
+    <!-- ==================== VIEW 0: LANDING PAGE & LOGIN PORTAL ==================== -->
     <section id="view-landing" class="flex-1 relative overflow-hidden min-h-screen">
       <div class="portal-scene">
         <div class="portal-sky"></div>
@@ -277,9 +279,9 @@ button:disabled {
             <div id="portal-login">
               <div class="text-center mb-5"><div class="text-5xl mb-2">🎮</div><h2 class="font-display text-3xl font-bold text-white">LOG MASUK</h2><p class="text-slate-300 text-sm font-semibold">Pilih peranan anda untuk meneruskan</p></div>
               <div class="grid grid-cols-3 gap-2 mb-5">
-                <button class="role-choice active" data-role="admin" onclick="selectPortalRole('admin')"><span>🛡️</span>Admin</button>
-                <button class="role-choice" data-role="teacher" onclick="selectPortalRole('teacher')"><span>👩‍🏫</span>Guru</button>
-                <button class="role-choice" data-role="student" onclick="selectPortalRole('student')"><span>🎒</span>Murid</button>
+                <button type="button" class="role-choice active" data-role="admin" onclick="selectPortalRole('admin')"><span>🛡️</span>Admin</button>
+                <button type="button" class="role-choice" data-role="teacher" onclick="selectPortalRole('teacher')"><span>👩‍🏫</span>Guru</button>
+                <button type="button" class="role-choice" data-role="student" onclick="selectPortalRole('student')"><span>🎒</span>Murid</button>
               </div>
               <form id="portal-login-form" class="space-y-3" onsubmit="portalLogin(event)">
                 <input type="hidden" id="portal-role" value="admin"/>
@@ -291,7 +293,7 @@ button:disabled {
               <p class="text-slate-400 text-xs text-center mt-3">Demo awal: Admin ID <b>admin</b> · Kata laluan <b>admin123</b></p>
             </div>
             <div id="portal-admin-panel" class="hidden">
-              <div class="flex items-center justify-between mb-4"><div><div class="text-cyan-300 text-xs font-black">PANEL PENTADBIR</div><h2 class="font-display text-2xl text-white font-bold">🛡️ Dashboard Admin</h2></div><button onclick="portalLogout()" class="portal-logout">Keluar</button></div>
+              <div class="flex items-center justify-between mb-4"><div><div class="text-cyan-300 text-xs font-black">PANEL PENTADBIR</div><h2 class="font-display text-2xl text-white font-bold">🛡️ Dashboard Admin</h2></div><button type="button" onclick="portalLogout()" class="portal-logout">Keluar</button></div>
               <p class="text-slate-300 text-sm mb-4">Daftarkan akaun guru baharu untuk mengurus kelas dan murid.</p>
               <form onsubmit="createTeacher(event)" class="space-y-3">
                 <input id="new-teacher-name" class="portal-input" required placeholder="Nama penuh guru"/>
@@ -302,7 +304,7 @@ button:disabled {
               <div class="portal-list-wrap"><h3 class="text-yellow-300 font-black text-sm mb-2">Senarai Guru Berdaftar</h3><div id="teacher-list" class="space-y-2"></div></div>
             </div>
             <div id="portal-teacher-panel" class="hidden">
-              <div class="flex items-center justify-between mb-4"><div><div class="text-cyan-300 text-xs font-black">PANEL PENGURUSAN</div><h2 class="font-display text-2xl text-white font-bold">👩‍🏫 Dashboard Guru</h2><p id="teacher-welcome" class="text-slate-300 text-xs"></p></div><button onclick="portalLogout()" class="portal-logout">Keluar</button></div>
+              <div class="flex items-center justify-between mb-4"><div><div class="text-cyan-300 text-xs font-black">PANEL PENGURUSAN</div><h2 class="font-display text-2xl text-white font-bold">👩‍🏫 Dashboard Guru</h2><p id="teacher-welcome" class="text-slate-300 text-xs"></p></div><button type="button" onclick="portalLogout()" class="portal-logout">Keluar</button></div>
               <div class="portal-subpanel mb-4"><h3 class="text-yellow-300 font-black mb-3">🏫 Daftar Kelas</h3><form onsubmit="createClass(event)" class="flex gap-2"><input id="new-class-name" class="portal-input min-w-0" required placeholder="Contoh: 5 Bestari"/><button class="portal-small-btn" type="submit">Tambah</button></form><div id="class-list" class="flex flex-wrap gap-2 mt-3"></div></div>
               <div class="portal-subpanel"><h3 class="text-cyan-300 font-black mb-3">🎒 Daftar Murid</h3><form onsubmit="createStudent(event)" class="space-y-2"><input id="new-student-name" class="portal-input" required placeholder="Nama murid"/><input id="new-student-id" class="portal-input" required placeholder="ID murid (unik)"/><input id="new-student-pin" class="portal-input" required minlength="4" placeholder="PIN murid (min. 4 aksara)"/><select id="new-student-class" class="portal-input" required><option value="">Pilih kelas</option></select><button class="portal-submit" type="submit">＋ DAFTARKAN MURID</button></form></div>
               <div class="portal-list-wrap"><h3 class="text-yellow-300 font-black text-sm mb-2">Murid di bawah jagaan</h3><div id="student-list" class="space-y-2"></div></div>
@@ -336,6 +338,12 @@ button:disabled {
               <p class="text-purple-200 text-sm sm:text-base font-semibold mt-0.5">
                 Pilih kawasan misi di bawah untuk mengumpul syiling emas dan membuka laluan ke <span class="text-orange-300 font-extrabold">Destinasi Juara</span>!
               </p>
+              <!-- Avatar Switcher -->
+              <div class="flex items-center justify-center md:justify-start gap-2 mt-2.5">
+                <span class="text-xs font-bold text-slate-300">Watak:</span>
+                <button onclick="switchPlayerAvatar('zafri')" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-cyan-600/40 hover:bg-cyan-500/60 border border-cyan-400 text-white">🧢 Zafri</button>
+                <button onclick="switchPlayerAvatar('maya')" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-orange-600/40 hover:bg-orange-500/60 border border-orange-400 text-white">🎀 Maya</button>
+              </div>
             </div>
           </div>
 
@@ -385,7 +393,7 @@ button:disabled {
         </div>
 
         <div id="mission-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          <!-- Dynamically rendered 5 Mission Cards with custom SVG scenes -->
+          <!-- Dynamically rendered 5 Mission Cards -->
         </div>
       </div>
     </section>
@@ -634,7 +642,7 @@ button:disabled {
           </div>
         </div>
 
-        <!-- Step B: Choose Correction (Appears once student clicks the wrong word) -->
+        <!-- Step B: Choose Correction -->
         <div id="m3-correction-box" class="hidden bg-purple-950/70 border-2 border-yellow-400 rounded-2xl p-4 space-y-3 animate-pop">
           <p class="text-sm font-extrabold text-yellow-300">
             🎯 Anda mengesan perkataan "<span id="m3-selected-wrong" class="underline text-orange-300"></span>". Pilih pembetulan yang tepat:
@@ -685,7 +693,7 @@ button:disabled {
         <div class="bg-slate-900/95 border-2 border-purple-500 rounded-3xl p-5 space-y-3 flex flex-col">
           <div class="flex items-center justify-between">
             <h3 class="font-display font-bold text-xl text-yellow-300">📄 Dokumen Draf Murid</h3>
-            <span class="text-xs font-extrabold bg-purple-800 text-purple-200 px-2.5 py-1 rounded-lg">8 Kesalahan Tersembunyi</span>
+            <span class="text-xs font-extrabold bg-purple-800 text-purple-200 px-2.5 py-1 rounded-lg">6 Kesalahan Utama</span>
           </div>
           <p class="text-xs text-slate-300 font-semibold">Tajuk: <strong>Lawatan Sambil Belajar ke Muzium Negara</strong>. Anda boleh menaip terus di bawah atau menilai cadangan Pembantu Editor di sebelah kanan.</p>
           <textarea id="m4-editor-textarea" rows="12"
@@ -702,7 +710,7 @@ button:disabled {
         <div class="bg-slate-900/95 border-2 border-cyan-400 rounded-3xl p-5 space-y-4">
           <div class="flex items-center justify-between">
             <h3 class="font-display font-bold text-xl text-cyan-300">🤖 Pembantu Editor Pintar</h3>
-            <span id="m4-review-counter" class="text-xs font-extrabold bg-slate-800 text-yellow-300 px-3 py-1 rounded-full">0 / 8 Disemak</span>
+            <span id="m4-review-counter" class="text-xs font-extrabold bg-slate-800 text-yellow-300 px-3 py-1 rounded-full">0 / 6 Disemak</span>
           </div>
 
           <div id="m4-ai-placeholder" class="bg-slate-950/70 border border-dashed border-cyan-500/50 rounded-2xl p-8 text-center space-y-3">
@@ -759,7 +767,7 @@ button:disabled {
           </label>
         </div>
 
-        <textarea id="m5-essay-editor" rows="8" placeholder="Tulis karangan lengkap anda di sini (sekurang-kurangnya 25 patah perkataan). Pastikan ejaan, tanda baca, imbuhan, penggunaan kata dan struktur ayat tepat!"
+        <textarea id="m5-essay-editor" rows="8" placeholder="Tulis karangan lengkap anda di sini (sekurang-kurangnya 15 patah perkataan). Pastikan ejaan, tanda baca, imbuhan, penggunaan kata dan struktur ayat tepat!"
           class="w-full p-4 rounded-2xl bg-slate-950 border-2 border-purple-500 focus:border-yellow-400 focus:outline-none text-white font-semibold text-base leading-relaxed"></textarea>
 
         <!-- Self-Editing Checklist -->
@@ -888,7 +896,7 @@ button:disabled {
   <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
   <script>
     /* =========================================================================
-       1. WEB AUDIO API SYNTHESIZER (Original Chiptune Loop & SFX - Zero External Files)
+       1. WEB AUDIO API SYNTHESIZER (Original Chiptune Loop & SFX)
        ========================================================================= */
     const SoundEngine = {
       ctx: null,
@@ -991,13 +999,11 @@ button:disabled {
     function updateAudioButtons() {
       const icon = SoundEngine.isMuted ? '🔇' : '🔊';
       const hudBtn = document.getElementById('btn-audio-toggle');
-      const landBtn = document.getElementById('landing-audio-btn');
       if (hudBtn) hudBtn.textContent = icon;
-      if (landBtn) landBtn.innerHTML = `<span>${icon}</span> <span class="hidden sm:inline">${SoundEngine.isMuted ? 'Dibisukan' : 'Muzik Latar'}</span>`;
     }
 
     /* =========================================================================
-       2. ORIGINAL SVG CHARACTER GENERATOR (Zafri & Maya - 100% Original Art)
+       2. ORIGINAL SVG CHARACTER GENERATOR (Zafri & Maya)
        ========================================================================= */
     function getAvatarSVG(type = 'zafri') {
       if (type === 'maya') {
@@ -1010,21 +1016,16 @@ button:disabled {
             </linearGradient>
           </defs>
           <rect width="100" height="100" rx="20" fill="url(#bgMaya)"/>
-          <!-- Pigtails -->
           <circle cx="24" cy="42" r="11" fill="#1E1B4B"/>
           <circle cx="76" cy="42" r="11" fill="#1E1B4B"/>
-          <!-- Face -->
           <circle cx="50" cy="52" r="24" fill="#FDBA74"/>
-          <!-- Street Cap -->
           <path d="M26 44 Q50 22 74 44 Z" fill="#00E5FF"/>
           <rect x="46" y="37" width="34" height="7" rx="3.5" fill="#FFD600"/>
-          <!-- Eyes & Smile -->
           <circle cx="42" cy="53" r="3.5" fill="#0F172A"/>
           <circle cx="58" cy="53" r="3.5" fill="#0F172A"/>
           <circle cx="43" cy="52" r="1.2" fill="#FFFFFF"/>
           <circle cx="59" cy="52" r="1.2" fill="#FFFFFF"/>
           <path d="M43 62 Q50 69 57 62" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <!-- Jacket -->
           <path d="M26 95 Q50 74 74 95 Z" fill="#FFD600"/>
           <path d="M42 80 L50 95 L58 80 Z" fill="#00E5FF"/>
         </svg>`;
@@ -1038,24 +1039,26 @@ button:disabled {
           </linearGradient>
         </defs>
         <rect width="100" height="100" rx="20" fill="url(#bgZafri)"/>
-        <!-- Spiky Hair -->
         <path d="M26 44 L32 24 L44 33 L52 20 L61 32 L72 25 L74 45 Z" fill="#0F172A"/>
-        <!-- Face -->
         <circle cx="50" cy="53" r="23" fill="#FDBA74"/>
-        <!-- Headphones -->
         <rect x="20" y="42" width="8" height="20" rx="4" fill="#FFD600"/>
         <rect x="72" y="42" width="8" height="20" rx="4" fill="#FFD600"/>
         <path d="M24 44 Q50 18 76 44" stroke="#FF6D00" stroke-width="5" fill="none"/>
-        <!-- Eyes & Smile -->
         <circle cx="42" cy="53" r="3.5" fill="#0F172A"/>
         <circle cx="58" cy="53" r="3.5" fill="#0F172A"/>
         <circle cx="43" cy="52" r="1.2" fill="#FFFFFF"/>
         <circle cx="59" cy="52" r="1.2" fill="#FFFFFF"/>
         <path d="M42 62 Q50 70 58 62" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <!-- Streetwear Hoodie -->
         <path d="M24 95 Q50 73 76 95 Z" fill="#FF6D00"/>
         <path d="M44 79 L50 95 L56 79 Z" fill="#FFFFFF"/>
       </svg>`;
+    }
+
+    function switchPlayerAvatar(avatarType) {
+      gameState.avatar = avatarType;
+      saveGameState();
+      SoundEngine.laneSwitch();
+      showToast(`Watak ditukar kepada ${avatarType === 'maya' ? 'Maya' : 'Zafri'}!`, '✨');
     }
 
     /* =========================================================================
@@ -1069,7 +1072,7 @@ button:disabled {
       avatar: 'zafri',
       coins: 0,
       xp: 0,
-      unlockedMissions: [1], // Mission 1 unlocked by default
+      unlockedMissions: [1],
       completedMissions: [],
       unlockAllOverride: false,
       mod2Drafts: {},
@@ -1148,6 +1151,10 @@ button:disabled {
     const VIEWS = ['landing', 'dashboard', 'mod1', 'mod2', 'mod3', 'mod4', 'mod5'];
 
     function navigateTo(viewName) {
+      if (viewName !== 'mod1') {
+        runnerState.active = false;
+      }
+
       VIEWS.forEach(v => {
         const el = document.getElementById(`view-${v}`);
         if (el) el.classList.add('hidden');
@@ -1196,7 +1203,6 @@ button:disabled {
       document.getElementById('hud-progress-bar').style.width = `${progressPct}%`;
       document.getElementById('hud-progress-text').textContent = `${progressPct}%`;
 
-      // Dashboard sync
       const dashAvatar = document.getElementById('dash-avatar-large');
       if (dashAvatar) dashAvatar.innerHTML = avatarHTML;
       document.getElementById('dash-player-name').textContent = gameState.name || 'Pelari';
@@ -1210,246 +1216,10 @@ button:disabled {
     }
 
     /* =========================================================================
-       5. LANDING PAGE HERO ANIMATION & REGISTRATION
+       5. LANDING PAGE INIT
        ========================================================================= */
-    function initLandingPage() { selectPortalRole('admin'); }
-
-    function revealRegistration(clearFields = false) {
-      SoundEngine.init();
-      SoundEngine.startBGM();
-      SoundEngine.laneSwitch();
-      document.getElementById('btn-start-adventure').classList.add('hidden');
-      document.getElementById('returning-player-box').classList.add('hidden');
-      const card = document.getElementById('registration-card');
-      card.classList.remove('hidden');
-      if (clearFields) {
-        document.getElementById('input-student-name').value = '';
-        document.getElementById('input-student-class').value = '';
-      }
-    }
-
-    function resumeExistingPlayer() {
-      SoundEngine.init();
-      SoundEngine.startBGM();
-      SoundEngine.unlock();
-      navigateTo('dashboard');
-    }
-
-    function handleRegister(e) {
-      e.preventDefault();
-      const name = document.getElementById('input-student-name').value.trim();
-      const studentClass = document.getElementById('input-student-class').value.trim();
-      const avatar = document.querySelector('input[name="avatarChoice"]:checked').value;
-
-      if (!name || !studentClass) return;
-
-      // If switching to a brand new student name, reset progress cleanly
-      if (gameState.name && gameState.name.toLowerCase() !== name.toLowerCase()) {
-        gameState = { ...DEFAULT_STATE };
-      }
-
-      gameState.name = name;
-      gameState.studentClass = studentClass;
-      gameState.avatar = avatar;
-      saveGameState();
-
-      SoundEngine.init();
-      SoundEngine.startBGM();
-      SoundEngine.unlock();
-      navigateTo('dashboard');
-    }
-
-    function startHeroCanvasAnimation() {
-      const canvas = document.getElementById('hero-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      let frame = 0;
-
-      function resize() {
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width || 600;
-        canvas.height = rect.height || 360;
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      function draw() {
-        const w = canvas.width;
-        const h = canvas.height;
-        frame++;
-
-        // Sky & City Twilight Gradient
-        const sky = ctx.createLinearGradient(0, 0, 0, h);
-        sky.addColorStop(0, '#1E1B4B');
-        sky.addColorStop(0.55, '#4C1D95');
-        sky.addColorStop(1, '#0F172A');
-        ctx.fillStyle = sky;
-        ctx.fillRect(0, 0, w, h);
-
-        // Parallax Modern City Skyline
-        const buildingColors = ['#2E1065', '#3B0764', '#1E293B'];
-        for (let i = 0; i < 12; i++) {
-          const bw = w / 8;
-          const bx = ((i * bw * 0.9) - (frame * 0.6) % (bw * 0.9));
-          const bh = 80 + ((i * 37) % 90);
-          ctx.fillStyle = buildingColors[i % buildingColors.length];
-          ctx.fillRect(bx, h * 0.56 - bh, bw - 6, bh);
-          // Neon windows
-          ctx.fillStyle = i % 2 === 0 ? '#00E5FF' : '#FFD600';
-          for (let wy = h * 0.56 - bh + 12; wy < h * 0.56 - 14; wy += 18) {
-            ctx.fillRect(bx + 10, wy, 8, 8);
-            ctx.fillRect(bx + 26, wy, 8, 8);
-          }
-        }
-
-        // Graffiti Wall Horizon
-        ctx.fillStyle = '#311042';
-        ctx.fillRect(0, h * 0.54, w, 24);
-        ctx.fillStyle = '#FF6D00';
-        ctx.font = 'bold 14px Fredoka, sans-serif';
-        const tagX = w - ((frame * 2.5) % (w + 260));
-        ctx.fillText('★ BAHASA JIWA BANGSA • EDITOR CILIK ★', tagX, h * 0.54 + 17);
-
-        // Moving Graffiti Subway Train in Background
-        const trainX = w - ((frame * 3.8) % (w + 420));
-        const trainY = h * 0.34;
-        ctx.fillStyle = '#E2E8F0';
-        ctx.beginPath();
-        ctx.roundRect(trainX, trainY, 320, 72, 14);
-        ctx.fill();
-        // Train Graffiti Stripe
-        ctx.fillStyle = '#6C2BD9';
-        ctx.fillRect(trainX + 8, trainY + 38, 304, 18);
-        ctx.fillStyle = '#00E5FF';
-        ctx.fillRect(trainX + 8, trainY + 56, 304, 8);
-        // Train Windows
-        ctx.fillStyle = '#0F172A';
-        for (let wx = 18; wx < 280; wx += 48) {
-          ctx.beginPath();
-          ctx.roundRect(trainX + wx, trainY + 10, 34, 22, 5);
-          ctx.fill();
-        }
-        // Train Headlight
-        ctx.fillStyle = '#FFD600';
-        ctx.beginPath();
-        ctx.arc(trainX + 10, trainY + 52, 6, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Perspective 3-Track Subway Ground
-        const horizonY = h * 0.6;
-        ctx.fillStyle = '#1E293B';
-        ctx.fillRect(0, horizonY, w, h - horizonY);
-
-        // Railway Sleepers (animated depth lines)
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 4;
-        const speedOffset = (frame * 6) % 28;
-        for (let y = horizonY + speedOffset; y < h; y += 28) {
-          ctx.beginPath();
-          ctx.moveTo(0, y);
-          ctx.lineTo(w, y);
-          ctx.stroke();
-        }
-
-        // 3 Converging Rails
-        const lanes = [0.25, 0.5, 0.75];
-        lanes.forEach(lx => {
-          ctx.strokeStyle = '#94A3B8';
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.moveTo(w * (0.5 + (lx - 0.5) * 0.35), horizonY);
-          ctx.lineTo(w * lx - 24, h);
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.moveTo(w * (0.5 + (lx - 0.5) * 0.35), horizonY);
-          ctx.lineTo(w * lx + 24, h);
-          ctx.stroke();
-        });
-
-        // Spinning Gold Coins along middle & right lanes
-        for (let c = 0; c < 4; c++) {
-          const cy = horizonY + ((frame * 4 + c * 45) % (h - horizonY));
-          const progress = (cy - horizonY) / (h - horizonY);
-          const cx = w * 0.5 + (c % 2 === 0 ? 0 : w * 0.22 * progress);
-          const radius = 8 + progress * 10;
-          const spinScale = Math.abs(Math.cos(frame * 0.1 + c));
-
-          ctx.save();
-          ctx.translate(cx, cy);
-          ctx.scale(Math.max(0.25, spinScale), 1);
-          ctx.fillStyle = '#FFD600';
-          ctx.beginPath();
-          ctx.arc(0, 0, radius, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#B45309';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.fillStyle = '#92400E';
-          ctx.font = `bold ${Math.round(radius)}px Fredoka, sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('★', 0, 1);
-          ctx.restore();
-        }
-
-        // Original Cartoon Runner Character Sprinting in Foreground
-        const runBob = Math.sin(frame * 0.25) * 6;
-        const armSwing = Math.cos(frame * 0.25) * 16;
-        const rx = w * 0.5;
-        const ry = h * 0.76 + runBob;
-
-        // Hoverboard Glow
-        ctx.fillStyle = '#00E5FF';
-        ctx.beginPath();
-        ctx.ellipse(rx, ry + 34, 34, 9, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#FF6D00';
-        ctx.beginPath();
-        ctx.ellipse(rx, ry + 32, 28, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Backpack
-        ctx.fillStyle = '#FFD600';
-        ctx.beginPath();
-        ctx.roundRect(rx - 22, ry - 14, 16, 26, 6);
-        ctx.fill();
-
-        // Hoodie Body
-        ctx.fillStyle = '#6C2BD9';
-        ctx.beginPath();
-        ctx.roundRect(rx - 15, ry - 18, 30, 34, 10);
-        ctx.fill();
-
-        // Swinging Arm
-        ctx.strokeStyle = '#FF6D00';
-        ctx.lineWidth = 7;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(rx + 12, ry - 8);
-        ctx.lineTo(rx + 22, ry + 6 + armSwing * 0.4);
-        ctx.stroke();
-
-        // Head & Headphones
-        ctx.fillStyle = '#FDBA74';
-        ctx.beginPath();
-        ctx.arc(rx, ry - 32, 16, 0, Math.PI * 2);
-        ctx.fill();
-        // Cap
-        ctx.fillStyle = '#00E5FF';
-        ctx.beginPath();
-        ctx.arc(rx, ry - 36, 16, Math.PI, 0);
-        ctx.fill();
-        ctx.fillRect(rx, ry - 38, 22, 5);
-        // Headphones
-        ctx.fillStyle = '#FFD600';
-        ctx.beginPath();
-        ctx.arc(rx - 15, ry - 31, 6, 0, Math.PI * 2);
-        ctx.fill();
-
-        requestAnimationFrame(draw);
-      }
-      draw();
+    function initLandingPage() {
+      selectPortalRole('admin');
     }
 
     /* =========================================================================
@@ -1521,7 +1291,6 @@ button:disabled {
 
         return `
         <div class="relative rounded-3xl border-4 ${isUnlocked ? m.border : 'border-slate-700'} bg-slate-900/95 overflow-hidden shadow-xl flex flex-col justify-between transition hover:-translate-y-1">
-          <!-- Illustrated Header Banner -->
           <div class="bg-gradient-to-r ${isUnlocked ? m.color : 'from-slate-800 to-slate-900'} p-4 relative overflow-hidden">
             <div class="flex items-center justify-between relative z-10">
               <span class="bg-slate-950/70 text-white font-black text-xs px-3 py-1 rounded-full">${m.code}</span>
@@ -1542,7 +1311,6 @@ button:disabled {
             </div>
           </div>
 
-          <!-- Card Body -->
           <div class="p-4 flex-1 flex flex-col justify-between space-y-4">
             <p class="text-sm text-slate-300 font-semibold leading-relaxed">${m.desc}</p>
             <div>
@@ -1732,7 +1500,7 @@ button:disabled {
     let runnerState = {
       active: false,
       qIndex: 0,
-      lane: 1, // 0: Left, 1: Center, 2: Right
+      lane: 1,
       gateY: 0,
       score: 0,
       lives: 3,
@@ -1742,11 +1510,10 @@ button:disabled {
 
     function initMod1() {
       const grid = document.getElementById('mod1-flashcards-grid');
-      grid.innerHTML = MOD1_NOTES.map((n, idx) => `
+      grid.innerHTML = MOD1_NOTES.map(n => `
         <div onclick="this.querySelector('.card-inner').classList.toggle('rotate-y-180')" class="perspective-1000 h-56 cursor-pointer group">
           <div class="card-inner relative w-full h-full transform-style-3d">
-            <!-- Front -->
-            <div class="backface-hidden absolute inset-0 bg-slate-950 border-3 ${n.color} border-2 rounded-2xl p-5 flex flex-col justify-between shadow-lg">
+            <div class="backface-hidden absolute inset-0 bg-slate-950 ${n.color} border-2 rounded-2xl p-5 flex flex-col justify-between shadow-lg">
               <div class="flex items-center justify-between">
                 <span class="bg-purple-800 text-cyan-200 text-xs font-extrabold px-2.5 py-1 rounded-full">${n.tag}</span>
                 <span class="text-xs font-bold text-yellow-300">Klik untuk lihat contoh ↻</span>
@@ -1754,7 +1521,6 @@ button:disabled {
               <h4 class="font-display font-bold text-xl text-white">${n.title}</h4>
               <p class="text-sm text-slate-300 font-semibold leading-relaxed">${n.front}</p>
             </div>
-            <!-- Back -->
             <div class="backface-hidden rotate-y-180 absolute inset-0 bg-gradient-to-br from-purple-900 to-slate-900 border-2 border-yellow-400 rounded-2xl p-5 flex flex-col justify-between shadow-lg">
               <div class="text-xs font-black text-yellow-300 uppercase">📌 Contoh &amp; Ciri Utama</div>
               <p class="text-xs sm:text-sm text-white font-semibold whitespace-pre-line leading-relaxed">${n.back}</p>
@@ -1783,7 +1549,6 @@ button:disabled {
       SoundEngine.laneSwitch();
     }
 
-    // Keyboard controls for Subway Quiz Runner
     window.addEventListener('keydown', (e) => {
       if (!runnerState.active || runnerState.paused) return;
       if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
@@ -1813,13 +1578,29 @@ button:disabled {
       canvas.width = rect.width || 800;
       canvas.height = rect.height || 360;
 
-      // Allow clicking/tapping directly on left/center/right third of canvas
+      // Tap left/center/right third
       canvas.onclick = (e) => {
         const b = canvas.getBoundingClientRect();
         const relX = (e.clientX - b.left) / b.width;
         if (relX < 0.33) setRunnerLane(0);
         else if (relX < 0.66) setRunnerLane(1);
         else setRunnerLane(2);
+      };
+
+      // Mobile touch swipe left/right
+      let touchStartX = 0;
+      canvas.ontouchstart = (e) => {
+        if (e.touches && e.touches.length) {
+          touchStartX = e.touches[0].clientX;
+        }
+      };
+      canvas.ontouchend = (e) => {
+        if (e.changedTouches && e.changedTouches.length) {
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          if (Math.abs(dx) > 30) {
+            setRunnerLane(runnerState.lane + (dx > 0 ? 1 : -1));
+          }
+        }
       };
 
       if (runnerState.animId) cancelAnimationFrame(runnerState.animId);
@@ -1843,7 +1624,6 @@ button:disabled {
       const h = canvas.height;
       const horizonY = h * 0.22;
 
-      // Background Tunnel & Sky
       const bg = ctx.createLinearGradient(0, 0, 0, h);
       bg.addColorStop(0, '#1E1B4B');
       bg.addColorStop(0.25, '#311042');
@@ -1851,7 +1631,6 @@ button:disabled {
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
 
-      // Perspective Track Surface
       ctx.fillStyle = '#1E293B';
       ctx.beginPath();
       ctx.moveTo(w * 0.25, horizonY);
@@ -1861,7 +1640,6 @@ button:disabled {
       ctx.closePath();
       ctx.fill();
 
-      // Animated Track Sleepers
       ctx.strokeStyle = '#334155';
       ctx.lineWidth = 3;
       const offset = (Date.now() * 0.18) % 26;
@@ -1872,7 +1650,6 @@ button:disabled {
         ctx.stroke();
       }
 
-      // 3 Track Lane Dividers & Rails
       const laneCentersTop = [0.34, 0.5, 0.66];
       const laneCentersBot = [0.18, 0.5, 0.82];
 
@@ -1890,9 +1667,8 @@ button:disabled {
         ctx.stroke();
       }
 
-      // Advance oncoming Answer Gates if not paused
       if (!runnerState.paused) {
-        runnerState.gateY += 0.0026; // Comfortable speed for primary school students to read & switch lanes
+        runnerState.gateY += 0.0026;
       }
 
       const q = MOD1_QUESTIONS[runnerState.qIndex];
@@ -1901,7 +1677,6 @@ button:disabled {
       const gateHeight = 36 + p * 38;
       const gateWidth = (w * 0.16) + p * (w * 0.13);
 
-      // Draw 3 Answer Gates on the 3 Lanes
       const gateColors = ['#6C2BD9', '#0284C7', '#EA580C'];
       for (let i = 0; i < 3; i++) {
         const cx = w * (laneCentersTop[i] + (laneCentersBot[i] - laneCentersTop[i]) * p);
@@ -1916,7 +1691,6 @@ button:disabled {
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        // Option Text inside Gate
         ctx.fillStyle = '#FFFFFF';
         const fontSize = Math.max(11, Math.round(11 + p * 6));
         ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
@@ -1925,31 +1699,26 @@ button:disabled {
         wrapCanvasText(ctx, q.options[i], cx, gy + gateHeight / 2, gateWidth - 12, fontSize + 2);
       }
 
-      // Draw Player Runner Character in Selected Lane
       const playerX = w * laneCentersBot[runnerState.lane];
       const playerY = h * 0.86 + Math.sin(Date.now() * 0.015) * 4;
 
-      // Hoverboard
       ctx.fillStyle = '#00E5FF';
       ctx.beginPath();
       ctx.ellipse(playerX, playerY + 24, 30, 8, 0, 0, Math.PI * 2);
       ctx.fill();
-      // Body
-      ctx.fillStyle = '#FF6D00';
+      ctx.fillStyle = gameState.avatar === 'maya' ? '#6C2BD9' : '#FF6D00';
       ctx.beginPath();
       ctx.roundRect(playerX - 14, playerY - 14, 28, 30, 8);
       ctx.fill();
-      // Head
       ctx.fillStyle = '#FDBA74';
       ctx.beginPath();
       ctx.arc(playerX, playerY - 26, 13, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#FFD600';
+      ctx.fillStyle = gameState.avatar === 'maya' ? '#00E5FF' : '#FFD600';
       ctx.beginPath();
       ctx.arc(playerX, playerY - 30, 13, Math.PI, 0);
       ctx.fill();
 
-      // Check Collision when Gate reaches Player
       if (!runnerState.paused && p >= 0.96) {
         runnerState.paused = true;
         handleRunnerCollision(runnerState.lane === q.correct, q);
@@ -2101,7 +1870,6 @@ button:disabled {
       document.getElementById('m2-word-count').textContent = '0';
       document.getElementById('m2-word-feedback').textContent = '';
 
-      // Mix good and bad words
       const pool = [...topic.goodWords, ...topic.badWords].sort(() => Math.random() - 0.5);
       document.getElementById('m2-word-pool').innerHTML = pool.map(w => `
         <button onclick="collectMod2Word(this, '${w.replace(/'/g, "\\'")}')" class="btn-arcade bg-slate-800 hover:bg-slate-700 border-2 border-cyan-400/60 text-white font-bold px-4 py-2.5 rounded-2xl text-sm">
@@ -2155,7 +1923,6 @@ button:disabled {
 
     function prepareMod2SentenceSorter() {
       const correct = mod2State.selectedTopic.sentences;
-      // Shuffle until different from original
       let shuffled = [...correct].sort(() => Math.random() - 0.5);
       if (shuffled.join('|') === correct.join('|')) {
         shuffled = [correct[2], correct[0], correct[3], correct[1]];
@@ -2199,7 +1966,6 @@ button:disabled {
         fb.className = 'text-sm font-extrabold text-green-300';
         document.getElementById('m2-collected-chips').textContent = mod2State.collectedWords.join(', ');
 
-        // Restore saved draft if exists
         const saved = gameState.mod2Drafts[mod2State.selectedTopic.id];
         if (saved) {
           document.getElementById('m2-draft-intro').value = saved.intro || '';
@@ -2222,816 +1988,4 @@ button:disabled {
         document.getElementById('m2-draft-outro').value
       ].join(' ').trim();
       const count = combined ? combined.split(/\s+/).length : 0;
-      document.getElementById('m2-draft-wordcount').textContent = count;
-      return count;
-    }
-
-    ['m2-draft-intro', 'm2-draft-body', 'm2-draft-outro'].forEach(id => {
-      document.addEventListener('input', (e) => {
-        if (e.target && e.target.id === id) updateMod2WordCount();
-      });
-    });
-
-    function saveMod2Draft(isSubmit) {
-      const intro = document.getElementById('m2-draft-intro').value.trim();
-      const body = document.getElementById('m2-draft-body').value.trim();
-      const outro = document.getElementById('m2-draft-outro').value.trim();
-      const wc = updateMod2WordCount();
-
-      gameState.mod2Drafts[mod2State.selectedTopic.id] = { intro, body, outro };
-      saveGameState();
-
-      const status = document.getElementById('m2-draft-status');
-      if (!isSubmit) {
-        SoundEngine.coin();
-        status.textContent = '💾 Draf penulisan berjaya disimpan dalam pelayar!';
-        return;
-      }
-
-      if (wc < 12) {
-        SoundEngine.wrong();
-        status.textContent = '⚠️ Sila tulis sekurang-kurangnya 12 patah perkataan sebelum menghantar draf.';
-        status.className = 'text-sm font-extrabold text-orange-400';
-        return;
-      }
-
-      addRewards(50, 80, 'Menghantar Draf Penulisan');
-      completeMission(2);
-      status.innerHTML = `
-        🎉 Tahniah! Draf dihantar (+50 Syiling). Misi 3 (Terowong Detektif) kini dibuka!
-        <button onclick="navigateTo('mod3')" class="ml-3 btn-arcade btn-orange text-xs px-4 py-2 rounded-xl text-white">🚀 Teruskan ke Misi 3</button>
-      `;
-      status.className = 'text-sm font-extrabold text-green-300';
-    }
-
-    /* =========================================================================
-       9. MOD 3: TEROWONG DETEKTIF (SPOT THE ERROR - SP 3.3.2)
-       ========================================================================= */
-    const MOD3_QUESTIONS = [
-      // Kategori 1: Kesalahan Ejaan (3 soalan)
-      {
-        cat: 'Kesalahan Ejaan',
-        tokens: ['Ibu', 'membeli', 'sayur-sayuran', 'segar', 'di', 'pasaraya', 'berhampiran', 'rumah.'],
-        wrongIdx: 5,
-        options: ['pasar raya', 'pasar-raya', 'pasarraya'],
-        correctOpt: 'pasar raya',
-        explain: 'Kata majmuk "pasar raya" hendaklah dieja terpisah sebagai dua perkataan.',
-        fixedSentence: 'Ibu membeli sayur-sayuran segar di pasar raya berhampiran rumah.'
-      },
-      {
-        cat: 'Kesalahan Ejaan',
-        tokens: ['Murid-murid', 'digalakkan', 'mengambil', 'bahagian', 'dalam', 'aktiviti', 'ko-kurikulum', 'sekolah.'],
-        wrongIdx: 6,
-        options: ['kokurikulum', 'ko kurikulum', 'kokurikulam'],
-        correctOpt: 'kokurikulum',
-        explain: 'Imbuhan pinjaman "ko-" ditulis rapat dengan kata dasar menjadi "kokurikulum".',
-        fixedSentence: 'Murid-murid digalakkan mengambil bahagian dalam aktiviti kokurikulum sekolah.'
-      },
-      {
-        cat: 'Kesalahan Ejaan',
-        tokens: ['Ayah', 'memesan', 'sepinggan', 'kueh', 'teow', 'goreng', 'di', 'restoran', 'itu.'],
-        wrongIdx: 3,
-        options: ['kuetiau', 'kueh-teow', 'kuihtiau'],
-        correctOpt: 'kuetiau',
-        explain: 'Menurut Kamus Dewan, ejaan baku yang tepat ialah "kuetiau" (dieja rapat).',
-        fixedSentence: 'Ayah memesan sepinggan kuetiau goreng di restoran itu.'
-      },
-      // Kategori 2: Kesalahan Tanda Baca (3 soalan)
-      {
-        cat: 'Kesalahan Tanda Baca',
-        tokens: ['"Wah,', 'cantiknya', 'lukisan', 'pemandangan', 'sawah', 'padi', 'ini."', 'kata', 'Siti.'],
-        wrongIdx: 6,
-        options: ['ini!"', 'ini?"', 'ini;"'],
-        correctOpt: 'ini!"',
-        explain: 'Ayat seruan yang dimulakan dengan kata seru "Wah," mesti diakhiri dengan tanda seru (!).',
-        fixedSentence: '"Wah, cantiknya lukisan pemandangan sawah padi ini!" kata Siti.'
-      },
-      {
-        cat: 'Kesalahan Tanda Baca',
-        tokens: ['Bilakah', 'rombongan', 'sekolah', 'kita', 'akan', 'bertolak', 'ke', 'melaka?'],
-        wrongIdx: 7,
-        options: ['Melaka?', 'Melaka.', 'melaka!'],
-        correctOpt: 'Melaka?',
-        explain: 'Nama tempat iaitu "Melaka" ialah Kata Nama Khas, jadi huruf pertamanya mesti huruf besar.',
-        fixedSentence: 'Bilakah rombongan sekolah kita akan bertolak ke Melaka?'
-      },
-      {
-        cat: 'Kesalahan Tanda Baca',
-        tokens: ['Emak', 'membeli', 'ikan', 'udang,', 'sotong', 'dan', 'ketam', 'di', 'pasar.'],
-        wrongIdx: 2,
-        options: ['ikan,', 'ikan;', 'ikan.'],
-        correctOpt: 'ikan,',
-        explain: 'Tanda koma (,) digunakan untuk memisahkan unsur-unsur yang disenaraikan secara berturut-turut.',
-        fixedSentence: 'Emak membeli ikan, udang, sotong dan ketam di pasar.'
-      },
-      // Kategori 3: Kesalahan Imbuhan (3 soalan)
-      {
-        cat: 'Kesalahan Imbuhan',
-        tokens: ['Pihak', 'kerajaan', 'bercadang', 'untuk', 'memperbesarkan', 'jalan', 'raya', 'yang', 'sempit', 'itu.'],
-        wrongIdx: 4,
-        options: ['memperbesar', 'membesarkan', 'diperbesar'],
-        correctOpt: 'memperbesar',
-        explain: 'Kata adjektif "besar" yang menerima apitan "memper-" tidak boleh menerima akhiran "-kan". Yang tepat ialah "memperbesar".',
-        fixedSentence: 'Pihak kerajaan bercadang untuk memperbesar jalan raya yang sempit itu.'
-      },
-      {
-        cat: 'Kesalahan Imbuhan',
-        tokens: ['Buku', 'cerita', 'yang', 'dipinjam', 'oleh', 'Amir', 'telah', 'di', 'pulangkan', 'semalam.'],
-        wrongIdx: 7,
-        options: ['dipulangkan', 'di-pulangkan', 'memulangkan'],
-        correctOpt: 'dipulangkan',
-        explain: 'Imbuhan awalan "di-" pada kata kerja pasif mesti ditulis rapat dengan kata dasar ("dipulangkan").',
-        fixedSentence: 'Buku cerita yang dipinjam oleh Amir telah dipulangkan semalam.'
-      },
-      {
-        cat: 'Kesalahan Imbuhan',
-        tokens: ['Cikgu', 'Aina', 'sedang', 'mengemas', 'kinikan', 'rekod', 'kehadiran', 'murid', 'kelasnya.'],
-        wrongIdx: 4,
-        options: ['kini', 'kininya', 'mengemaskini'],
-        correctOpt: 'kini',
-        explain: 'Kata majmuk "kemas kini" yang menerima awalan "meN-" dieja terpisah tanpa akhiran "-kan" ("mengemas kini").',
-        fixedSentence: 'Cikgu Aina sedang mengemas kini rekod kehadiran murid kelasnya.'
-      },
-      // Kategori 4: Kesalahan Penggunaan Kata (3 soalan)
-      {
-        cat: 'Kesalahan Penggunaan Kata',
-        tokens: ['Kerajaan', 'membina', 'jalan', 'berturap', 'di', 'kawasan', 'pendalaman', 'Sabah', 'dan', 'Sarawak.'],
-        wrongIdx: 6,
-        options: ['pedalaman', 'kedalaman', 'dalam'],
-        correctOpt: 'pedalaman',
-        explain: '"Pedalaman" bermaksud kawasan terpencil jauh dari bandar, manakala "pendalaman" bermaksud proses mendalamkan sungai.',
-        fixedSentence: 'Kerajaan membina jalan berturap di kawasan pedalaman Sabah dan Sarawak.'
-      },
-      {
-        cat: 'Kesalahan Penggunaan Kata',
-        tokens: ['Pelari', 'pecut', 'itu', 'berjaya', 'menamatkan', 'larian', 'dalam', 'tempuh', '11', 'saat.'],
-        wrongIdx: 7,
-        options: ['tempoh', 'menempuh', 'tertempuh'],
-        correctOpt: 'tempoh',
-        explain: '"Tempoh" merujuk kepada jangka masa, manakala "tempuh" bermaksud melanggar atau melalui rintangan.',
-        fixedSentence: 'Pelari pecut itu berjaya menamatkan larian dalam tempoh 11 saat.'
-      },
-      {
-        cat: 'Kesalahan Penggunaan Kata',
-        tokens: ['Abang', 'menerima', 'hadiah', 'Tokoh', 'Murid', 'Cemerlang', 'sempena', 'Hari', 'Anugerah.'],
-        wrongIdx: 2,
-        options: ['anugerah', 'derma', 'upah'],
-        correctOpt: 'anugerah',
-        explain: 'Gelaran penghormatan tinggi seperti Tokoh Murid lebih tepat menggunakan perkataan "anugerah".',
-        fixedSentence: 'Abang menerima anugerah Tokoh Murid Cemerlang sempena Hari Anugerah.'
-      },
-      // Kategori 5: Kesalahan Struktur Ayat (3 soalan)
-      {
-        cat: 'Kesalahan Struktur Ayat',
-        tokens: ['Semua', 'murid-murid', 'diminta', 'beratur', 'di', 'dewan', 'sekolah', 'sekarang.'],
-        wrongIdx: 1,
-        options: ['murid', 'para murid-murid', 'pelajar-pelajar'],
-        correctOpt: 'murid',
-        explain: 'Kata bilangan "Semua" sudah membawa maksud jamak, maka kata nama selepasnya tidak perlu digandakan ("Semua murid").',
-        fixedSentence: 'Semua murid diminta beratur di dewan sekolah sekarang.'
-      },
-      {
-        cat: 'Kesalahan Struktur Ayat',
-        tokens: ['Kami', 'sekeluarga', 'gemar', 'makan', 'goreng', 'pisang', 'panas', 'pada', 'waktu', 'petang.'],
-        wrongIdx: 4,
-        options: ['pisang goreng', 'goreng-pisang', 'pisang-goreng'],
-        correctOpt: 'pisang goreng',
-        explain: 'Mengikut Hukum D-M (Diterangkan-Menerangkan), benda yang diterangkan ialah "pisang", maka frasa yang betul ialah "pisang goreng".',
-        fixedSentence: 'Kami sekeluarga gemar makan pisang goreng panas pada waktu petang.'
-      },
-      {
-        cat: 'Kesalahan Struktur Ayat',
-        tokens: ['Sekolah', 'di', 'mana', 'saya', 'belajar', 'terletak', 'berhampiran', 'taman', 're创作/rekreasi.'],
-        wrongIdx: 1,
-        options: ['tempat', 'di-mana', 'yang mana'],
-        correctOpt: 'tempat',
-        explain: 'Kata tanya "di mana" tidak boleh digunakan sebagai kata hubung dalam ayat penyata. Gunakan "tempat".',
-        fixedSentence: 'Sekolah tempat saya belajar terletak berhampiran taman rekreasi.'
-      }
-    ];
-    // Clean token typo in last question
-    MOD3_QUESTIONS[14].tokens[8] = 'rekreasi.';
-
-    let mod3State = {
-      qIndex: 0,
-      score: 0,
-      answeredIds: []
-    };
-
-    function initMod3() {
-      const cats = ['Semua (15)', 'Kesalahan Ejaan', 'Kesalahan Tanda Baca', 'Kesalahan Imbuhan', 'Kesalahan Penggunaan Kata', 'Kesalahan Struktur Ayat'];
-      document.getElementById('m3-category-tabs').innerHTML = cats.map((c, idx) => `
-        <button onclick="jumpMod3Category(${idx})" class="btn-arcade bg-slate-800 hover:bg-purple-700 border border-purple-500/60 text-xs font-extrabold px-3 py-1.5 rounded-xl text-cyan-200">
-          ${c}
-        </button>
-      `).join('');
-      renderMod3Question();
-    }
-
-    function jumpMod3Category(catIdx) {
-      if (catIdx === 0) mod3State.qIndex = 0;
-      else mod3State.qIndex = (catIdx - 1) * 3;
-      SoundEngine.laneSwitch();
-      renderMod3Question();
-    }
-
-    function renderMod3Question() {
-      const q = MOD3_QUESTIONS[mod3State.qIndex];
-      document.getElementById('m3-score').textContent = mod3State.score;
-      document.getElementById('m3-cat-badge').textContent = `Kategori: ${q.cat}`;
-      document.getElementById('m3-q-progress').textContent = `Kes ${mod3State.qIndex + 1} daripada ${MOD3_QUESTIONS.length}`;
-
-      document.getElementById('m3-correction-box').classList.add('hidden');
-      document.getElementById('m3-feedback-box').classList.add('hidden');
-
-      const tokensDiv = document.getElementById('m3-sentence-tokens');
-      tokensDiv.innerHTML = q.tokens.map((tok, idx) => `
-        <button onclick="selectMod3Token(${idx})" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-500/30 border-2 border-slate-700 hover:border-cyan-400 text-white transition">
-          ${tok}
-        </button>
-      `).join('');
-    }
-
-    function selectMod3Token(idx) {
-      const q = MOD3_QUESTIONS[mod3State.qIndex];
-      const buttons = document.getElementById('m3-sentence-tokens').querySelectorAll('button');
-
-      if (idx === q.wrongIdx) {
-        SoundEngine.laneSwitch();
-        buttons.forEach((b, i) => {
-          if (i === idx) b.className = 'px-3 py-1.5 rounded-xl bg-orange-500 border-2 border-yellow-300 text-white font-black animate-pulse';
-        });
-        document.getElementById('m3-selected-wrong').textContent = q.tokens[idx];
-        const optBox = document.getElementById('m3-correction-options');
-        optBox.innerHTML = q.options.map(opt => `
-          <button onclick="submitMod3Correction('${opt.replace(/'/g, "\\'")}')" class="btn-arcade bg-slate-800 hover:bg-purple-700 border-2 border-cyan-400 py-3 px-4 rounded-xl font-bold text-white text-sm sm:text-base">
-            ${opt}
-          </button>
-        `).join('');
-        document.getElementById('m3-correction-box').classList.remove('hidden');
-      } else {
-        SoundEngine.wrong();
-        buttons[idx].className = 'px-3 py-1.5 rounded-xl bg-rose-950 border-2 border-rose-500 text-rose-300';
-        showToast('Perkataan itu sudah betul! Cuba periksa perkataan lain dalam ayat.', '🔦');
-      }
-    }
-
-    function submitMod3Correction(chosenOpt) {
-      const q = MOD3_QUESTIONS[mod3State.qIndex];
-      const fbBox = document.getElementById('m3-feedback-box');
-      const fbHeader = document.getElementById('m3-fb-header');
-      const fbExplain = document.getElementById('m3-fb-explanation');
-      const fbSentence = document.getElementById('m3-fb-correct-sentence');
-
-      document.getElementById('m3-correction-box').classList.add('hidden');
-      fbBox.classList.remove('hidden');
-
-      if (chosenOpt === q.correctOpt) {
-        if (!mod3State.answeredIds.includes(mod3State.qIndex)) {
-          mod3State.answeredIds.push(mod3State.qIndex);
-          mod3State.score++;
-          addRewards(10, 15);
-        }
-        fbBox.className = 'rounded-2xl p-4 border-2 border-green-400 bg-green-950/60 space-y-2 animate-pop';
-        fbHeader.textContent = '🎉 Syabas Detektif! Pembetulan Tepat (+10 Syiling)';
-        fbHeader.className = 'font-display font-bold text-xl text-green-300';
-      } else {
-        SoundEngine.wrong();
-        fbBox.className = 'rounded-2xl p-4 border-2 border-orange-400 bg-orange-950/60 space-y-2 animate-pop';
-        fbHeader.textContent = `⚠️ Hampir Tepat! Jawapan Sebenar: "${q.correctOpt}"`;
-        fbHeader.className = 'font-display font-bold text-xl text-orange-300';
-      }
-
-      fbExplain.textContent = q.explain;
-      fbSentence.textContent = q.fixedSentence;
-      document.getElementById('m3-score').textContent = mod3State.score;
-    }
-
-    function nextDetectiveQuestion() {
-      mod3State.qIndex++;
-      if (mod3State.qIndex >= MOD3_QUESTIONS.length) {
-        completeMission(3);
-        showToast('Tahniah! Semua kes selesai. Misi 4 (Makmal Editor) dibuka!', '🏆');
-        navigateTo('mod4');
-      } else {
-        renderMod3Question();
-      }
-    }
-
-    /* =========================================================================
-       10. MOD 4: MAKMAL EDITOR (DIGITAL EDITING CHALLENGE + SIMULATED AI ASSISTANT)
-       ========================================================================= */
-    const MOD4_RAW_TEXT = `Pada hari sabtu yang lalu, Persatuan Bahasa Melayu sekolah saya telah mengadakan lawatan sambil belajar ke Muzium Negara di kuala lumpur. Rombongan kami terdiri daripada 35 orang murid-murid dan empat orang guru pengiring.
-
-Setibanya di sana, kami disambut mesra oleh pegawai muzium. Beliau memperjelaskan sejarah kemerdekaan negara kepada kami dengan penuh semangat. Kami juga berpeluang melihat pelbagai artifak lama yang di pamerkan di galeri utama.
-
-Selain itu, kami mencatat maklumat penting dalam buku nota sebagai rujukan. Lawatan ini amat berfaedah kerana dapat menambah ilmu pengetahuan kami tentang sejarah tanah air?`;
-
-    const MOD4_SUGGESTIONS = [
-      {
-        id: 's1',
-        category: 'Tanda Baca (Huruf Besar)',
-        original: 'hari sabtu',
-        suggested: 'hari Sabtu',
-        reason: 'Nama hari ("Sabtu") ialah Kata Nama Khas, jadi huruf pertamanya mesti ditulis dengan huruf besar.',
-        quizQ: 'Mengapakah perkataan "Sabtu" perlu menggunakan huruf besar?',
-        quizOpts: ['Kerana ia Kata Nama Khas', 'Kerana ia kata kerja'],
-        quizAns: 0
-      },
-      {
-        id: 's2',
-        category: 'Tanda Baca (Nama Tempat)',
-        original: 'di kuala lumpur',
-        suggested: 'di Kuala Lumpur',
-        reason: 'Nama ibu negara "Kuala Lumpur" ialah Kata Nama Khas dan perlu dimulakan dengan huruf besar.',
-        quizQ: 'Apakah jenis kata bagi "Kuala Lumpur"?',
-        quizOpts: ['Kata Adjektif', 'Kata Nama Khas'],
-        quizAns: 1
-      },
-      {
-        id: 's3',
-        category: 'Struktur Ayat (Kata Bilangan)',
-        original: '35 orang murid-murid',
-        suggested: '35 orang murid',
-        reason: 'Kata bilangan tentu "35 orang" sudah menunjukkan jumlah yang banyak (jamak), maka perkataan "murid" tidak perlu digandakan.',
-        quizQ: 'Bolehkah kata nama digandakan selepas kata bilangan "35 orang"?',
-        quizOpts: ['Tidak boleh (Lewah)', 'Boleh sentiasa'],
-        quizAns: 0
-      },
-      {
-        id: 's4',
-        category: 'Imbuhan',
-        original: 'memperjelaskan',
-        suggested: 'menjelaskan',
-        reason: 'Kata dasar "jelas" ialah kata adjektif; bentuk imbuhan yang gramatis ialah "menjelaskan" atau "memperjelas" (tanpa apitan rangkap memper-...-kan).',
-        quizQ: 'Manakah bentuk kata kerja yang gramatis?',
-        quizOpts: ['menjelaskan / memperjelas', 'memperjelaskan'],
-        quizAns: 0
-      },
-      {
-        id: 's5',
-        category: 'Ejaan Imbuhan di-',
-        original: 'di pamerkan',
-        suggested: 'dipamerkan',
-        reason: 'Imbuhan awalan "di-" bagi kata kerja pasif mesti ditulis rapat dengan kata dasar ("dipamerkan").',
-        quizQ: 'Bagaimanakah ejaan imbuhan awalan "di-" pada kata kerja?',
-        quizOpts: ['Dieja rapat (dipamerkan)', 'Dieja jarak (di pamerkan)'],
-        quizAns: 0
-      },
-      {
-        id: 's6',
-        category: 'Tanda Baca (Akhir Ayat)',
-        original: 'sejarah tanah air?',
-        suggested: 'sejarah tanah air.',
-        reason: 'Ayat tersebut ialah ayat penyata yang menyatakan fakta, bukan ayat tanya. Gunakan tanda noktah (.) di akhir ayat.',
-        quizQ: 'Apakah tanda baca yang betul di akhir ayat penyata?',
-        quizOpts: ['Tanda noktah (.)', 'Tanda soal (?)'],
-        quizAns: 0
-      }
-    ];
-
-    let mod4State = {
-      reviewedIds: [],
-      decisions: {} // id -> 'accepted' | 'rejected'
-    };
-
-    function initMod4() {
-      const area = document.getElementById('m4-editor-textarea');
-      if (!area.value.trim()) {
-        area.value = MOD4_RAW_TEXT;
-      }
-      updateMod4Counter();
-    }
-
-    function resetMod4Document() {
-      document.getElementById('m4-editor-textarea').value = MOD4_RAW_TEXT;
-      mod4State = { reviewedIds: [], decisions: {} };
-      document.getElementById('m4-ai-placeholder').classList.remove('hidden');
-      document.getElementById('m4-suggestions-list').classList.add('hidden');
-      updateMod4Counter();
-    }
-
-    function updateMod4Counter() {
-      document.getElementById('m4-review-counter').textContent = `${mod4State.reviewedIds.length} / ${MOD4_SUGGESTIONS.length} Disemak`;
-    }
-
-    function runSimulatedAIAssistant() {
-      SoundEngine.laneSwitch();
-      document.getElementById('m4-ai-placeholder').classList.add('hidden');
-      const list = document.getElementById('m4-suggestions-list');
-      list.classList.remove('hidden');
-
-      list.innerHTML = MOD4_SUGGESTIONS.map(s => {
-        const decision = mod4State.decisions[s.id];
-        return `
-        <div id="card-${s.id}" class="bg-slate-950 border-2 ${decision === 'accepted' ? 'border-green-400' : decision === 'rejected' ? 'border-amber-400' : 'border-purple-500'} rounded-2xl p-4 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">${s.category}</span>
-            ${decision ? `<span class="text-xs font-extrabold ${decision === 'accepted' ? 'text-green-400' : 'text-amber-300'}">${decision === 'accepted' ? '✔ Diterima' : '✖ Ditolak'}</span>` : ''}
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
-            <div class="bg-rose-950/60 border border-rose-500/40 p-2 rounded-xl">
-              <span class="text-rose-300 font-extrabold block text-[11px]">AYAT ASAL:</span>
-              <span class="line-through text-slate-200 font-bold">${s.original}</span>
-            </div>
-            <div class="bg-green-950/60 border border-green-500/40 p-2 rounded-xl">
-              <span class="text-green-300 font-extrabold block text-[11px]">CADANGAN PEMBETULAN:</span>
-              <span class="text-white font-extrabold">${s.suggested}</span>
-            </div>
-          </div>
-          <p class="text-xs text-slate-300 font-semibold leading-relaxed">💡 <strong>Sebab:</strong> ${s.reason}</p>
-
-          <!-- Comprehension check before applying -->
-          <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
-            <div class="text-[11px] font-extrabold text-yellow-300">Semakan Kefahaman: ${s.quizQ}</div>
-            <div class="flex flex-wrap gap-2">
-              ${s.quizOpts.map((opt, idx) => `
-                <button onclick="handleMod4Decision('${s.id}', 'accepted', ${idx === s.quizAns})" class="btn-arcade bg-green-700 hover:bg-green-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg">
-                  ✔ Terima (${opt})
-                </button>
-              `).join('')}
-              <button onclick="handleMod4Decision('${s.id}', 'rejected', true)" class="btn-arcade bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-600">
-                ✖ Tolak Cadangan
-              </button>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-    }
-
-    function handleMod4Decision(sugId, action, understood) {
-      const s = MOD4_SUGGESTIONS.find(item => item.id === sugId);
-      if (!s) return;
-
-      if (action === 'accepted' && !understood) {
-        SoundEngine.wrong();
-        showToast('Sila pilih sebab tatabahasa yang betul untuk menerima pembetulan ini!', '💡');
-        return;
-      }
-
-      const area = document.getElementById('m4-editor-textarea');
-      if (action === 'accepted') {
-        if (area.value.includes(s.original)) {
-          area.value = area.value.replace(s.original, s.suggested);
-        }
-        SoundEngine.coin();
-      } else {
-        SoundEngine.laneSwitch();
-      }
-
-      mod4State.decisions[sugId] = action;
-      if (!mod4State.reviewedIds.includes(sugId)) {
-        mod4State.reviewedIds.push(sugId);
-        addRewards(10, 15);
-      }
-      updateMod4Counter();
-      runSimulatedAIAssistant();
-    }
-
-    function submitMod4Workshop() {
-      if (mod4State.reviewedIds.length < 4) {
-        SoundEngine.wrong();
-        showToast('Sila semak sekurang-kurangnya 4 cadangan Pembantu Editor dahulu!', '🤖');
-        return;
-      }
-      addRewards(40, 60, 'Bengkel Editor Selesai');
-      completeMission(4);
-      navigateTo('mod5');
-    }
-
-    /* =========================================================================
-       11. MOD 5: DESTINASI JUARA (FINAL BOSS + CHAMPION CERTIFICATE)
-       ========================================================================= */
-    const MOD5_BOSS_QUIZ = [
-      { q: 'Apakah format wajib di bahagian kanan atas Surat Kiriman Tidak Rasmi?', opts: ['Alamat pengirim dan tarikh', 'Nama Guru Besar', 'Masa mengikut urutan', 'Tandatangan saksi'], ans: 0 },
-      { q: 'Manakah ejaan kata majmuk yang BETUL?', opts: ['antarabangsa', 'antara bangsa', 'antarabangsah', 'antara-bangsa'], ans: 0 },
-      { q: 'Pilih ayat yang menggunakan tanda baca yang BETUL.', opts: ['"Amboi, segaknya kamu hari ini!" puji ibu.', '"Amboi, segaknya kamu hari ini." puji ibu.', '"Amboi segaknya kamu hari ini?" puji ibu.', '"amboi, segaknya kamu hari ini!" puji ibu.'], ans: 0 },
-      { q: 'Imbuhan manakah yang tepat untuk ayat: "Pekerja itu sedang _____ longkang yang tersumbat."', opts: ['memperdalam', 'memperdalamkan', 'diperdalamkan', 'kedalaman'], ans: 0 },
-      { q: 'Apakah tujuan utama perenggan pendahuluan dalam karangan tidak berformat?', opts: ['Memperkenalkan tajuk dan gambaran umum cerita', 'Menyenaraikan semua penutup cerita', 'Menulis alamat pengirim', 'Merekodkan jadual masa'], ans: 0 },
-      { q: 'Pilih penggunaan kata yang paling tepat: "Nenek menyimpan barang kemas di dalam _____ besi."', opts: ['peti', 'kotak kertas', 'sampul', 'bakul'], ans: 0 },
-      { q: 'Manakah ayat yang mempunyai struktur ayat yang GRAMATIS?', opts: ['Semua peserta pertandingan berkumpul di dewan.', 'Semua peserta-peserta pertandingan berkumpul di dewan.', 'Peserta-peserta semua berkumpul dewan.', 'Semua peserta berkumpul di mana dewan.'], ans: 0 },
-      { q: 'Dalam penulisan Catatan, peristiwa hendaklah disusun mengikut...', opts: ['Urutan masa (kronologi)', 'Susunan abjad', 'Nombor telefon', 'Alamat rumah'], ans: 0 },
-      { q: 'Pilih ejaan yang betul bagi kata pinjaman bahasa Inggeris:', opts: ['teknologi', 'teknoloji', 'tegnologi', 'teknologee'], ans: 0 },
-      { q: 'Apakah langkah terakhir sebelum menghantar sesebuah hasil penulisan?', opts: ['Menyemak dan memurnikan ejaan, tanda baca dan ayat', 'Memadamkan perenggan pendahuluan', 'Menukar tajuk kepada bahasa asing', 'Menggandakan semua kata nama'], ans: 0 }
-    ];
-
-    let mod5State = {
-      quizIdx: 0,
-      quizScore: 0,
-      quizAnswered: false
-    };
-
-    function initMod5() {
-      if (gameState.mod5Essay) {
-        document.getElementById('m5-essay-editor').value = gameState.mod5Essay;
-      }
-      setBossStage(1);
-    }
-
-    function setBossStage(stage) {
-      for (let i = 1; i <= 4; i++) {
-        const tab = document.getElementById(`m5-tab-${i}`);
-        const pane = document.getElementById(`m5-stage-${i}`);
-        if (i === stage) {
-          tab.className = 'py-2 px-2 rounded-xl bg-yellow-400 text-slate-950 font-black';
-          pane.classList.remove('hidden');
-        } else {
-          tab.className = i < stage
-            ? 'py-2 px-2 rounded-xl bg-green-600 text-white font-extrabold'
-            : 'py-2 px-2 rounded-xl bg-slate-800 text-slate-400';
-          pane.classList.add('hidden');
-        }
-      }
-    }
-
-    function saveBossEssay() {
-      const topic = document.querySelector('input[name="bossTopic"]:checked').value;
-      const text = document.getElementById('m5-essay-editor').value.trim();
-      gameState.mod5Topic = topic;
-      gameState.mod5Essay = text;
-      saveGameState();
-      SoundEngine.coin();
-      showToast('Karangan akhir berjaya disimpan!', '💾');
-    }
-
-    function downloadBossEssayTxt() {
-      const topic = document.querySelector('input[name="bossTopic"]:checked')?.value || gameState.mod5Topic;
-      const text = document.getElementById('m5-essay-editor').value.trim() || gameState.mod5Essay || '(Tiada kandungan)';
-      const content = `MISI EDITOR CILIK: THE ULTIMATE BAHASA MELAYU RUN!\nNama Murid: ${gameState.name}\nKelas: ${gameState.studentClass}\nTajuk: ${topic}\nTarikh: ${new Date().toLocaleDateString('ms-MY')}\n--------------------------------------------------\n\n${text}`;
-      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Karangan_${(gameState.name || 'Murid').replace(/\s+/g, '_')}.txt`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast('Fail karangan (.TXT) dimuat turun!', '📄');
-    }
-
-    function proceedToBossQuiz() {
-      const text = document.getElementById('m5-essay-editor').value.trim();
-      const wc = text ? text.split(/\s+/).length : 0;
-      if (wc < 15) {
-        SoundEngine.wrong();
-        showToast('Sila tulis karangan sekurang-kurangnya 15 patah perkataan dahulu!', '✍️');
-        return;
-      }
-      saveBossEssay();
-      mod5State = { quizIdx: 0, quizScore: 0, quizAnswered: false };
-      setBossStage(2);
-      renderBossQuizQuestion();
-    }
-
-    function renderBossQuizQuestion() {
-      const q = MOD5_BOSS_QUIZ[mod5State.quizIdx];
-      mod5State.quizAnswered = false;
-      document.getElementById('m5-quiz-counter').textContent = `Soalan ${mod5State.quizIdx + 1} / ${MOD5_BOSS_QUIZ.length}`;
-      document.getElementById('m5-quiz-question').textContent = q.q;
-      document.getElementById('m5-quiz-feedback').classList.add('hidden');
-      document.getElementById('m5-quiz-next-wrap').classList.add('hidden');
-
-      document.getElementById('m5-quiz-options').innerHTML = q.opts.map((opt, idx) => `
-        <button onclick="answerBossQuiz(${idx})" class="btn-arcade text-left p-3.5 rounded-2xl bg-slate-800 hover:bg-purple-800 border-2 border-purple-500 text-white font-bold text-sm sm:text-base">
-          ${String.fromCharCode(65 + idx)}. ${opt}
-        </button>
-      `).join('');
-    }
-
-    function answerBossQuiz(chosenIdx) {
-      if (mod5State.quizAnswered) return;
-      mod5State.quizAnswered = true;
-      const q = MOD5_BOSS_QUIZ[mod5State.quizIdx];
-      const fb = document.getElementById('m5-quiz-feedback');
-      fb.classList.remove('hidden');
-
-      if (chosenIdx === q.ans) {
-        mod5State.quizScore += 10;
-        addRewards(10, 20);
-        fb.className = 'p-3.5 rounded-xl text-sm font-extrabold bg-green-950/80 border border-green-400 text-green-300';
-        fb.textContent = '🎉 Tepat sekali! (+10 Syiling Emas)';
-      } else {
-        SoundEngine.wrong();
-        fb.className = 'p-3.5 rounded-xl text-sm font-extrabold bg-rose-950/80 border border-rose-400 text-rose-300';
-        fb.textContent = `❌ Kurang tepat. Jawapan yang betul ialah: ${q.opts[q.ans]}`;
-      }
-      document.getElementById('m5-quiz-next-wrap').classList.remove('hidden');
-    }
-
-    function nextBossQuizQuestion() {
-      mod5State.quizIdx++;
-      if (mod5State.quizIdx >= MOD5_BOSS_QUIZ.length) {
-        setBossStage(3);
-      } else {
-        renderBossQuizQuestion();
-      }
-    }
-
-    function completeFinalChampionMission() {
-      const r1 = document.getElementById('m5-ref-1').value.trim();
-      const r2 = document.getElementById('m5-ref-2').value.trim();
-      if (!r1 || !r2) {
-        SoundEngine.wrong();
-        showToast('Sila lengkapkan kedua-dua soalan refleksi pembelajaran!', '📝');
-        return;
-      }
-
-      addRewards(100, 150, 'Juara Editor Cilik!');
-      completeMission(5);
-      SoundEngine.unlock();
-
-      setBossStage(4);
-      document.getElementById('m5-final-summary-text').innerHTML = `
-        Markah Kuiz Akhir: <span class="text-cyan-300">${mod5State.quizScore}/100</span> •
-        Jumlah Syiling Emas: <span class="text-yellow-300">${gameState.coins}</span> •
-        Pencapaian: <span class="text-orange-300">${getPlayerRank(gameState.xp)}</span>
-      `;
-      renderDigitalCertificate();
-    }
-
-    function renderDigitalCertificate() {
-      const canvas = document.getElementById('certificate-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-
-      // Rich Cream & Royal Purple/Gold Border
-      ctx.fillStyle = '#FFFDF7';
-      ctx.fillRect(0, 0, w, h);
-
-      // Outer Subway-Art Border
-      ctx.strokeStyle = '#6C2BD9';
-      ctx.lineWidth = 22;
-      ctx.strokeRect(18, 18, w - 36, h - 36);
-
-      ctx.strokeStyle = '#FFD600';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(36, 36, w - 72, h - 72);
-
-      // Top Header Ribbon
-      ctx.fillStyle = '#2E1065';
-      ctx.fillRect(39, 39, w - 78, 120);
-
-      ctx.fillStyle = '#FFD600';
-      ctx.font = 'bold 38px Fredoka, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('SIJIL PENCAPAIAN EDITOR CILIK', w / 2, 95);
-
-      ctx.fillStyle = '#00E5FF';
-      ctx.font = 'bold 18px Nunito, sans-serif';
-      ctx.fillText('MISI EDITOR CILIK: THE ULTIMATE BAHASA MELAYU RUN! (SK 3.3)', w / 2, 132);
-
-      // Body Text
-      ctx.fillStyle = '#334155';
-      ctx.font = 'bold 22px Nunito, sans-serif';
-      ctx.fillText('Dengan ini diperakui bahawa', w / 2, 220);
-
-      // Student Name
-      ctx.fillStyle = '#6C2BD9';
-      ctx.font = 'bold 48px Fredoka, sans-serif';
-      ctx.fillText((gameState.name || 'MURID CEMERLANG').toUpperCase(), w / 2, 285);
-
-      // Underline
-      ctx.strokeStyle = '#FF6D00';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(w * 0.2, 302);
-      ctx.lineTo(w * 0.8, 302);
-      ctx.stroke();
-
-      // Class
-      ctx.fillStyle = '#0F172A';
-      ctx.font = 'bold 26px Nunito, sans-serif';
-      ctx.fillText(`Kelas: ${gameState.studentClass || '-'}`, w / 2, 345);
-
-      // Achievement Description
-      ctx.fillStyle = '#334155';
-      ctx.font = '600 20px Nunito, sans-serif';
-      ctx.fillText('Telah berjaya menamatkan kelima-lima cabaran interaktif penulisan dan penyuntingan', w / 2, 405);
-      ctx.fillText('Bahasa Melayu (Standard Pembelajaran 3.3.1 & 3.3.2) dengan cemerlang serta meraih', w / 2, 435);
-
-      // Badge Title
-      ctx.fillStyle = '#EA580C';
-      ctx.font = 'bold 30px Fredoka, sans-serif';
-      ctx.fillText('★ LENCANA EDITOR CEMERLANG ★', w / 2, 488);
-
-      // Gold Seal Emblem
-      ctx.fillStyle = '#FFD600';
-      ctx.beginPath();
-      ctx.arc(w / 2, 575, 48, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#B45309';
-      ctx.lineWidth = 5;
-      ctx.stroke();
-      ctx.fillStyle = '#1E1B4B';
-      ctx.font = 'bold 14px Fredoka, sans-serif';
-      ctx.fillText('JUARA', w / 2, 570);
-      ctx.fillText(`${gameState.coins} SYILING`, w / 2, 590);
-
-      // Footer Signatures
-      ctx.fillStyle = '#475569';
-      ctx.font = 'bold 16px Nunito, sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText(`Tarikh: ${new Date().toLocaleDateString('ms-MY')}`, 85, 610);
-
-      ctx.textAlign = 'right';
-      ctx.fillText('Disahkan secara digital oleh:', w - 85, 588);
-      ctx.fillStyle = '#6C2BD9';
-      ctx.fillText('Sistem DLO Misi Editor Cilik', w - 85, 612);
-    }
-
-    function downloadCertificatePNG() {
-      const canvas = document.getElementById('certificate-canvas');
-      if (!canvas) return;
-      const link = document.createElement('a');
-      link.download = `Sijil_Editor_Cilik_${(gameState.name || 'Murid').replace(/\s+/g, '_')}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      showToast('Sijil Digital (PNG) berjaya dimuat turun!', '🏆');
-    }
-
-
-    /* =========================================================================
-       PORTAL AUTH: ADMIN / GURU / MURID (local demo storage)
-       ========================================================================= */
-    const PORTAL_KEY = 'misiEditorCilikPortal_v1';
-    let portalData = JSON.parse(localStorage.getItem(PORTAL_KEY) || '{"teachers":[],"classes":[],"students":[]}');
-    let activeTeacher = null;
-    function savePortalData(){ localStorage.setItem(PORTAL_KEY, JSON.stringify(portalData)); }
-    function selectPortalRole(role){
-      document.getElementById('portal-role').value=role;
-      document.querySelectorAll('.role-choice').forEach(b=>b.classList.toggle('active',b.dataset.role===role));
-      document.getElementById('portal-user-label').textContent=role==='admin'?'ID Admin':role==='teacher'?'ID Guru':'ID Murid';
-      document.getElementById('portal-username').placeholder=role==='student'?'Contoh: MURID001':role==='teacher'?'ID yang diberikan admin':'admin';
-      document.getElementById('portal-password').placeholder=role==='student'?'Masukkan PIN':'Masukkan kata laluan';
-      document.getElementById('portal-login-message').textContent='';
-    }
-    function hidePortalPanels(){
-      ['portal-login','portal-admin-panel','portal-teacher-panel'].forEach(id=>document.getElementById(id).classList.add('hidden'));
-    }
-    function portalLogin(e){
-      e.preventDefault();
-      const role=document.getElementById('portal-role').value, id=document.getElementById('portal-username').value.trim(), pass=document.getElementById('portal-password').value;
-      const msg=document.getElementById('portal-login-message');
-      if(role==='admin' && id==='admin' && pass==='admin123'){
-        hidePortalPanels();document.getElementById('portal-admin-panel').classList.remove('hidden');renderTeacherList();return;
-      }
-      if(role==='teacher'){
-        const t=portalData.teachers.find(x=>x.id.toLowerCase()===id.toLowerCase()&&x.password===pass);
-        if(t){activeTeacher=t;hidePortalPanels();document.getElementById('portal-teacher-panel').classList.remove('hidden');document.getElementById('teacher-welcome').textContent='Selamat datang, '+t.name;renderTeacherPanel();return;}
-      }
-      if(role==='student'){
-        const st=portalData.students.find(x=>x.id.toLowerCase()===id.toLowerCase()&&x.pin===pass);
-        if(st){
-          gameState={...DEFAULT_STATE,name:st.name,studentClass:st.className,avatar:'zafri',studentId:st.id};
-          saveGameState();SoundEngine.init();SoundEngine.startBGM();hidePortalPanels();
-          document.getElementById('portal-login').classList.remove('hidden');
-          navigateTo('dashboard');return;
-        }
-      }
-      msg.textContent='ID atau kata laluan/PIN tidak tepat. Sila cuba lagi.';
-    }
-    function createTeacher(e){
-      e.preventDefault();
-      const name=document.getElementById('new-teacher-name').value.trim(),id=document.getElementById('new-teacher-id').value.trim(),password=document.getElementById('new-teacher-pass').value;
-      if(portalData.teachers.some(t=>t.id.toLowerCase()===id.toLowerCase())){showToast('ID guru sudah digunakan.','⚠️');return;}
-      portalData.teachers.push({name,id,password});savePortalData();e.target.reset();renderTeacherList();showToast('Akaun guru berjaya didaftarkan.','👩‍🏫');
-    }
-    function renderTeacherList(){
-      const el=document.getElementById('teacher-list');
-      el.innerHTML=portalData.teachers.length?portalData.teachers.map(t=>`<div class="portal-list-item"><span>${escapePortalText(t.name)}</span><span>ID: ${escapePortalText(t.id)}</span></div>`).join(''):'<p class="text-slate-400 text-xs">Belum ada guru didaftarkan.</p>';
-    }
-    function escapePortalText(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-    function renderTeacherPanel(){
-      const classes=portalData.classes.filter(c=>c.teacherId===activeTeacher.id);
-      document.getElementById('class-list').innerHTML=classes.length?classes.map(c=>`<span class="bg-purple-700 text-white text-xs font-black rounded-full px-3 py-2">${escapePortalText(c.name)}</span>`).join(''):'<span class="text-slate-400 text-xs">Belum ada kelas.</span>';
-      const select=document.getElementById('new-student-class');
-      select.innerHTML='<option value="">Pilih kelas</option>'+classes.map(c=>`<option value="${escapePortalText(c.name)}">${escapePortalText(c.name)}</option>`).join('');
-      const students=portalData.students.filter(st=>st.teacherId===activeTeacher.id);
-      document.getElementById('student-list').innerHTML=students.length?students.map(st=>`<div class="portal-list-item"><span>${escapePortalText(st.name)} · ${escapePortalText(st.className)}</span><span>ID: ${escapePortalText(st.id)}</span></div>`).join(''):'<p class="text-slate-400 text-xs">Belum ada murid didaftarkan.</p>';
-    }
-    function createClass(e){
-      e.preventDefault();const name=document.getElementById('new-class-name').value.trim();
-      if(portalData.classes.some(c=>c.teacherId===activeTeacher.id&&c.name.toLowerCase()===name.toLowerCase())){showToast('Kelas ini sudah wujud.','⚠️');return;}
-      portalData.classes.push({name,teacherId:activeTeacher.id});savePortalData();e.target.reset();renderTeacherPanel();showToast('Kelas berjaya ditambah.','🏫');
-    }
-    function createStudent(e){
-      e.preventDefault();const name=document.getElementById('new-student-name').value.trim(),id=document.getElementById('new-student-id').value.trim(),pin=document.getElementById('new-student-pin').value,className=document.getElementById('new-student-class').value;
-      if(!className){showToast('Sila daftar dan pilih kelas dahulu.','⚠️');return;}
-      if(portalData.students.some(st=>st.id.toLowerCase()===id.toLowerCase())){showToast('ID murid sudah digunakan.','⚠️');return;}
-      portalData.students.push({name,id,pin,className,teacherId:activeTeacher.id});savePortalData();e.target.reset();renderTeacherPanel();showToast('Akaun murid berjaya didaftarkan.','🎒');
-    }
-    function portalLogout(){
-      activeTeacher=null;hidePortalPanels();document.getElementById('portal-login').classList.remove('hidden');
-      document.getElementById('portal-login-form').reset();selectPortalRole('admin');navigateTo('landing');
-    }
-
-    /* =========================================================================
-       12. APPLICATION BOOTSTRAP
-       ========================================================================= */
-    window.addEventListener('DOMContentLoaded', () => {
-      initLandingPage();
-    });
-  </script>
-</body>
-</html>
+      document.getElementById('m2-draft-word
